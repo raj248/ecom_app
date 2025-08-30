@@ -2,7 +2,7 @@ import { GestureResponderEvent } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '~/components/Button';
 
-import ProductServices from '~/services/productServices';
+import ProductServices from '~/services/ProductServices';
 import { BASE_URL } from '~/utils/api/base';
 
 export default function Modal() {
