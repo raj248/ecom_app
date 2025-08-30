@@ -31,14 +31,24 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.shashankraj007281.ecomapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "package": "com.shashankraj007281.ecomapp"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "c2e0aafb-11a3-40f1-8764-b5318eaf0f2f"
       }
     }
   }
