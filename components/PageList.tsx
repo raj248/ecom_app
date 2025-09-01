@@ -50,6 +50,7 @@ export default function PageList({ pages, onPress }: PageListProps) {
       renderItem={renderItem}
       contentContainerStyle={{ paddingVertical: 8 }}
       showsVerticalScrollIndicator={false}
+      scrollEnabled={false}
     />
   );
 }

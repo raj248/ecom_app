@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import OrderServices from '~/services/OrderServices';
+import useGetSetting from '~/hooks/useGetSetting';
 
 // const FeatheredIconName = keyof typeof Feather['name'];
 
@@ -34,6 +35,7 @@ const StatCard = ({ title, quantity, Icon, color, bgColor }: CardProps) => (
 const ProfilePage = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const { storeCustomizationSetting } = useGetSetting();
   const [orderData, setOrderData] = useState<any>(null);
 
   useEffect(() => {
