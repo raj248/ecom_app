@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -9,10 +9,12 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Platform,
+  Alert,
 } from 'react-native';
-import { useForm, Controller } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { Feather } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useLoginSubmit } from '~/hooks/useLoginSubmit';
 
 type FormData = {
   email: string;
@@ -20,28 +22,15 @@ type FormData = {
 };
 
 export default function LoginPage() {
+  const { control, handleSubmit, errors, loading, submitHandler } = useLoginSubmit('login');
+
   const {
-    control,
-    handleSubmit,
-    formState: { errors },
+    control: formControl,
+    handleSubmit: formHandleSubmit,
+    formState: { errors: formErrors },
   } = useForm<FormData>({
-    defaultValues: {
-      email: 'justin@gmail.com',
-      password: '12345678',
-    },
+    defaultValues: { email: 'justin@gmail.com', password: '12345678' },
   });
-
-  const [loading, setLoading] = useState(false);
-
-  const submitHandler = (data: FormData) => {
-    setLoading(true);
-    console.log('Form Submitted:', data);
-
-    // simulate API request
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -56,7 +45,7 @@ export default function LoginPage() {
             <View style={{ marginTop: 20 }}>
               {/* Email Input */}
               <Controller
-                control={control}
+                control={formControl}
                 name="email"
                 rules={{
                   required: 'Email is required',
@@ -76,11 +65,11 @@ export default function LoginPage() {
                   </View>
                 )}
               />
-              {errors.email && <Text style={styles.errorText}>{errors.email.message}</Text>}
+              {formErrors.email && <Text style={styles.errorText}>{formErrors.email.message}</Text>}
 
               {/* Password Input */}
               <Controller
-                control={control}
+                control={formControl}
                 name="password"
                 rules={{ required: 'Password is required' }}
                 render={({ field: { onChange, value } }) => (
@@ -96,10 +85,16 @@ export default function LoginPage() {
                   </View>
                 )}
               />
-              {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
+              {formErrors.password && (
+                <Text style={styles.errorText}>{formErrors.password.message}</Text>
+              )}
 
               {/* Forgot Password */}
-              <TouchableOpacity style={styles.forgotPassword}>
+              <TouchableOpacity
+                style={styles.forgotPassword}
+                onPress={() =>
+                  Alert.alert('Forgot password', 'Redirect to forgot password screen')
+                }>
                 <Text style={styles.forgotPasswordText}>Forgot password?</Text>
               </TouchableOpacity>
 
@@ -107,7 +102,7 @@ export default function LoginPage() {
               <TouchableOpacity
                 style={[styles.button, loading && { opacity: 0.7 }]}
                 disabled={loading}
-                onPress={handleSubmit(submitHandler)}>
+                onPress={formHandleSubmit(submitHandler)}>
                 {loading ? (
                   <ActivityIndicator size="small" color="#fff" />
                 ) : (
