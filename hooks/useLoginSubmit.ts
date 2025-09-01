@@ -47,6 +47,7 @@ export const useLoginSubmit = (
 
         // Save token in AsyncStorage
         await AsyncStorage.setItem('token', res.token);
+        console.log(res.token);
         Alert.alert('Success', 'Logged in successfully');
 
         // Navigate using Expo Router

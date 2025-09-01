@@ -18,11 +18,8 @@ const OrderServices = {
     return requests.post('/order/create/razorpay', body);
   },
 
-  getOrderCustomer: async ({
-    page = 1,
-    limit = 8,
-  }: { page?: number; limit?: number } = {}): Promise<any> => {
-    return requests.get(`/order?limit=${limit}&page=${page}`);
+  getOrderCustomer: async (id: string, body?: any): Promise<any> => {
+    return requests.get(`/order/customer/${id}`, body);
   },
 
   getOrderById: async (id: string, body?: any): Promise<any> => {

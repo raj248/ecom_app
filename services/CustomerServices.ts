@@ -1,9 +1,20 @@
 // CustomerServices.ts
 import requests from './httpServices';
 
+export type LoginCustomerResponse = {
+  refreshToken: string;
+  token: string;
+  _id: string;
+  name: string;
+  email: string;
+  address?: string;
+  phone?: string;
+  image?: string;
+};
+
 const CustomerServices = {
-  loginCustomer: async (body: any): Promise<any> => {
-    return requests.post('/customer/login', body);
+  loginCustomer: async (body: any): Promise<LoginCustomerResponse> => {
+    return requests.post<LoginCustomerResponse>('/customer/login', body);
   },
 
   verifyEmailAddress: async (body: any): Promise<any> => {
