@@ -1,6 +1,7 @@
 import { Link, Tabs } from 'expo-router';
 import { HeaderButton } from '../../components/HeaderButton';
 import { TabBarIcon } from '../../components/TabBarIcon';
+import CustomHeader from '~/components/CustomHeader';
 
 export default function TabLayout() {
   return (
@@ -13,16 +14,23 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <HeaderButton />
-            </Link>
-          ),
-          headerLeft: () => (
-            <Link href="/debug" asChild>
-              <HeaderButton icon="bug" />
-            </Link>
-          ),
+          headerShown: false,
+          // headerRight: () => (
+          //   <Link href="/modal" asChild>
+          //     <HeaderButton />
+          //   </Link>
+          // ),
+          // headerLeft: () => (
+          //   <Link href="/debug" asChild>
+          //     <HeaderButton icon="bug" />
+          //   </Link>
+          // ),
+          // header: () => (
+          //   <CustomHeader
+          //     placeholder="Search for products (e.g. fish, apple, oil)"
+          //     onSearch={(q) => console.log('Searching for:', q)}
+          //   />
+          // ),
         }}
       />
       <Tabs.Screen

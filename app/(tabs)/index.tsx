@@ -12,6 +12,8 @@ import PopularProductsSection from '~/components/PopularProductsSection';
 import PopularProducts from '~/components/PopularProduct';
 import DiscountedProductsSection from '~/components/DiscountedProductsSection';
 import LatestDiscountedProducts from '~/components/LatestDiscountedProduct';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import CustomHeader from '~/components/CustomHeader';
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -26,43 +28,46 @@ export default function Home() {
   }, []);
 
   return (
-    <ScrollView className="flex-1 bg-white">
-      {/* Drop-in carousel */}
-      <Carousel slider={storeCustomizationSetting?.slider} />
+    <SafeAreaView edges={['top']} className="flex-1">
+      <CustomHeader />
+      <ScrollView className="flex-1 bg-white">
+        {/* Drop-in carousel */}
+        <Carousel slider={storeCustomizationSetting?.slider} />
 
-      {/* Promotion Banner */}
-      <PromotionBanner
-        status={homeSetting?.promotion_banner_status}
-        title={homeSetting?.promotion_title}
-        description={homeSetting?.promotion_description}
-        buttonName={homeSetting?.promotion_button_name}
-        buttonLink={homeSetting?.promotion_button_link}
-      />
+        {/* Promotion Banner */}
+        <PromotionBanner
+          status={homeSetting?.promotion_banner_status}
+          title={homeSetting?.promotion_title}
+          description={homeSetting?.promotion_description}
+          buttonName={homeSetting?.promotion_button_name}
+          buttonLink={homeSetting?.promotion_button_link}
+        />
 
-      {/* Feature Section */}
-      <FeatureSection
-        status={homeSetting?.featured_status}
-        title={homeSetting?.feature_title}
-        description={homeSetting?.feature_description}
-      />
+        {/* Feature Section */}
+        <FeatureSection
+          status={homeSetting?.featured_status}
+          title={homeSetting?.feature_title}
+          description={homeSetting?.feature_description}
+        />
 
-      {/* Categories */}
-      <FeatureCategory />
+        {/* Categories */}
+        <FeatureCategory />
 
-      <PopularProductsSection
-        status={homeSetting?.popular_products_status}
-        title={homeSetting?.popular_title}
-        description={homeSetting?.popular_description}
-      />
-      <PopularProducts />
+        <PopularProductsSection
+          status={homeSetting?.popular_products_status}
+          title={homeSetting?.popular_title}
+          description={homeSetting?.popular_description}
+        />
+        <PopularProducts />
 
-      <DiscountedProductsSection
-        status={homeSetting?.discount_product_status}
-        title={homeSetting?.latest_discount_title}
-        description={homeSetting?.latest_discount_description}
-      />
+        <DiscountedProductsSection
+          status={homeSetting?.discount_product_status}
+          title={homeSetting?.latest_discount_title}
+          description={homeSetting?.latest_discount_description}
+        />
 
-      <LatestDiscountedProducts />
-    </ScrollView>
+        <LatestDiscountedProducts />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
