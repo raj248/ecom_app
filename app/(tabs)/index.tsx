@@ -8,6 +8,8 @@ import Carousel from '~/components/Carousel';
 import PromotionBanner from '~/components/PromotionBanner';
 import FeatureSection from '~/components/FeatureSection';
 import FeatureCategory from '~/components/FeatureCategory';
+import PopularProductsSection from '~/components/PopularProductsSection';
+import PopularProducts from '~/components/PopularProduct';
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -44,6 +46,13 @@ export default function Home() {
 
       {/* Categories */}
       <FeatureCategory />
+
+      <PopularProductsSection
+        status={homeSetting?.popular_products_status}
+        title={homeSetting?.popular_title}
+        description={homeSetting?.popular_description}
+      />
+      <PopularProducts />
     </ScrollView>
   );
 }

@@ -41,3 +41,24 @@ export interface Product {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export interface Review {
+  _id: string;
+  user: {
+    _id: string;
+    name: string;
+    image?: string;
+  };
+  comment?: string;
+  rating?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface GetShowingStoreProductsResponse {
+  reviews: Review[];
+  products: Product[];
+  popularProducts: Product[];
+  relatedProducts: Product[];
+  discountedProducts: Product[];
+}

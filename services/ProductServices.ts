@@ -1,6 +1,6 @@
 // productService.ts
 import requests from './httpServices';
-import { Product } from '~/models/Product';
+import { GetShowingStoreProductsResponse, Product } from '~/models/Product';
 
 const ProductServices = {
   getShowingProducts: async (): Promise<Product[]> => {
@@ -12,9 +12,9 @@ const ProductServices = {
     category?: string;
     title?: string;
     slug?: string;
-  }): Promise<Product[]> => {
+  }): Promise<GetShowingStoreProductsResponse> => {
     const { category = '', title = '', slug = '' } = params;
-    return requests.get<Product[]>(
+    return requests.get<GetShowingStoreProductsResponse>(
       `/products/store?category=${category}&title=${title}&slug=${slug}`
     );
   },
