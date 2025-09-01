@@ -1,7 +1,5 @@
-import { Link, Tabs } from 'expo-router';
-import { HeaderButton } from '../../components/HeaderButton';
-import { TabBarIcon } from '../../components/TabBarIcon';
-import CustomHeader from '~/components/CustomHeader';
+import { Tabs } from 'expo-router';
+import { Feather } from '@expo/vector-icons';
 
 export default function TabLayout() {
   return (
@@ -10,48 +8,35 @@ export default function TabLayout() {
         tabBarActiveTintColor: 'black',
       }}>
       <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerShown: false,
-          // headerRight: () => (
-          //   <Link href="/modal" asChild>
-          //     <HeaderButton />
-          //   </Link>
-          // ),
-          // headerLeft: () => (
-          //   <Link href="/debug" asChild>
-          //     <HeaderButton icon="bug" />
-          //   </Link>
-          // ),
-          // header: () => (
-          //   <CustomHeader
-          //     placeholder="Search for products (e.g. fish, apple, oil)"
-          //     onSearch={(q) => console.log('Searching for:', q)}
-          //   />
-          // ),
-        }}
-      />
-      <Tabs.Screen
         name="menu"
         options={{
           title: 'Menu',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color, size }) => <Feather name="align-left" size={size} color={color} />,
+          headerShown: false,
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="index"
         options={{
-          title: 'Profile',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Home',
+          tabBarIcon: ({ color, size }) => <Feather name="home" size={size} color={color} />,
+          headerShown: false,
         }}
       />
       <Tabs.Screen
         name="cart"
         options={{
           title: 'Cart',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="shopping-cart" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color, size }) => <Feather name="user" size={size} color={color} />,
         }}
       />
     </Tabs>

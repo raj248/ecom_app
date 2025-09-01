@@ -19,6 +19,7 @@
     "@expo/vector-icons": "^14.0.0",
     "@gorhom/bottom-sheet": "^4.6.4",
     "@legendapp/list": "^1.0.7",
+    "@react-native-async-storage/async-storage": "2.1.2",
     "@react-native-community/datetimepicker": "8.4.1",
     "@react-native-community/slider": "4.5.6",
     "@react-native-picker/picker": "2.11.1",
@@ -46,6 +47,7 @@
     "nativewind": "latest",
     "react": "19.0.0",
     "react-dom": "19.0.0",
+    "react-hook-form": "^7.62.0",
     "react-native": "0.79.5",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-pager-view": "6.7.1",
@@ -55,8 +57,7 @@
     "react-native-uitextview": "2.0.0-rc.10",
     "react-native-web": "^0.20.0",
     "tailwind-merge": "^2.2.1",
-    "zustand": "^4.5.1",
-    "@react-native-async-storage/async-storage": "2.1.2"
+    "zustand": "^4.5.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

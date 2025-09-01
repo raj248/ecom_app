@@ -3,7 +3,7 @@ import { View, Text, Image, TouchableOpacity, FlatList, ActivityIndicator } from
 import CategoryServices from '~/services/CategoryServices';
 import { Category } from '~/models/Category';
 
-export default function FeatureCategory({ navigation }: any) {
+export default function FeatureCategory() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
