@@ -1,6 +1,6 @@
 // services/SettingServices.ts
 import requests from './httpServices';
-import { Setting } from '~/models/Setting';
+import { Setting, StoreCustomizationSetting } from '~/models/Setting';
 
 const SettingServices = {
   // store setting
@@ -13,8 +13,8 @@ const SettingServices = {
   },
 
   // customization
-  getStoreCustomizationSetting: async (): Promise<Setting> => {
-    return requests.get<Setting>('/setting/store/customization');
+  getStoreCustomizationSetting: async (): Promise<StoreCustomizationSetting> => {
+    return requests.get<StoreCustomizationSetting>('/setting/store/customization');
   },
 
   getShowingLanguage: async (): Promise<Setting[]> => {

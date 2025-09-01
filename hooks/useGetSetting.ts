@@ -4,11 +4,13 @@ import { useQuery } from '@tanstack/react-query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import SettingServices from '../services/SettingServices';
+import { Setting, StoreCustomizationSetting } from '~/models/Setting';
 // import { storeCustomization } from "../utils/storeCustomizationSetting";
 
 const useGetSetting = () => {
   const [lang, setLang] = useState<string | null>(null);
-  const [storeCustomizationSetting, setStoreCustomizationSetting] = useState<any>();
+  const [storeCustomizationSetting, setStoreCustomizationSetting] =
+    useState<StoreCustomizationSetting>();
 
   // Fetch global setting
   const { data: globalSetting } = useQuery({
