@@ -1,16 +1,17 @@
 import { Stack } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ScreenContent } from '~/components/ScreenContent';
+import LoginPage from '../login';
 
-export default function Home() {
+export default function Profile() {
   return (
-    <>
-      <Stack.Screen options={{ title: 'Tab Two' }} />
-      <View style={styles.container}>
-        <ScreenContent path="app/(tabs)/two.tsx" title="Tab Two" />
-      </View>
-    </>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f9fafb' }}>
+      <ScrollView className="flex-1 bg-white">
+        <LoginPage />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
