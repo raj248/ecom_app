@@ -10,6 +10,8 @@ import FeatureSection from '~/components/FeatureSection';
 import FeatureCategory from '~/components/FeatureCategory';
 import PopularProductsSection from '~/components/PopularProductsSection';
 import PopularProducts from '~/components/PopularProduct';
+import DiscountedProductsSection from '~/components/DiscountedProductsSection';
+import LatestDiscountedProducts from '~/components/LatestDiscountedProduct';
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -53,6 +55,14 @@ export default function Home() {
         description={homeSetting?.popular_description}
       />
       <PopularProducts />
+
+      <DiscountedProductsSection
+        status={homeSetting?.discount_product_status}
+        title={homeSetting?.latest_discount_title}
+        description={homeSetting?.latest_discount_description}
+      />
+
+      <LatestDiscountedProducts />
     </ScrollView>
   );
 }
