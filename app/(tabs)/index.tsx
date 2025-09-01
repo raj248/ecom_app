@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { Text } from '~/components/nativewindui/Text';
 import useGetSetting from '~/hooks/useGetSetting';
 import { Product } from '~/models/Product';
 import ProductServices from '~/services/ProductServices';
 import Carousel from '~/components/Carousel';
 import PromotionBanner from '~/components/PromotionBanner';
+import FeatureSection from '~/components/FeatureSection';
+import FeatureCategory from '~/components/FeatureCategory';
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const { storeCustomizationSetting } = useGetSetting();
+  const homeSetting = storeCustomizationSetting?.home;
 
   useEffect(() => {
     (async () => {
@@ -17,18 +20,30 @@ export default function Home() {
       setProducts(productList);
     })();
   }, []);
-  console.log('Promotion Banner Status', storeCustomizationSetting?.home.promotion_banner_status);
+
   return (
-    <View className="flex-1 bg-white">
+    <ScrollView className="flex-1 bg-white">
       {/* Drop-in carousel */}
       <Carousel slider={storeCustomizationSetting?.slider} />
+
+      {/* Promotion Banner */}
       <PromotionBanner
-        status={storeCustomizationSetting?.home.promotion_banner_status}
-        title={storeCustomizationSetting?.home.promotion_title}
-        description={storeCustomizationSetting?.home.promotion_description}
-        buttonName={storeCustomizationSetting?.home.promotion_button_name}
-        buttonLink={storeCustomizationSetting?.home.promotion_button_link}
+        status={homeSetting?.promotion_banner_status}
+        title={homeSetting?.promotion_title}
+        description={homeSetting?.promotion_description}
+        buttonName={homeSetting?.promotion_button_name}
+        buttonLink={homeSetting?.promotion_button_link}
       />
-    </View>
+
+      {/* Feature Section */}
+      <FeatureSection
+        status={homeSetting?.featured_status}
+        title={homeSetting?.feature_title}
+        description={homeSetting?.feature_description}
+      />
+
+      {/* Categories */}
+      <FeatureCategory />
+    </ScrollView>
   );
 }
