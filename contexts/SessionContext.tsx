@@ -27,6 +27,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
       try {
         const token = await AsyncStorage.getItem('token');
         if (token) {
+          setToken(token); // set default axios/fetch token
           const refreshToken = await AsyncStorage.getItem('refreshToken');
           const _id = await AsyncStorage.getItem('_id');
           const name = await AsyncStorage.getItem('name');
@@ -46,7 +47,6 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
             image: image || '',
           };
           setSession(s);
-          setToken(token); // set default axios/fetch token
           console.log('loaded session. ', s.name);
         }
       } finally {

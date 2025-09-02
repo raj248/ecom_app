@@ -2,9 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import CustomerServices, { LoginCustomerResponse } from '~/services/CustomerServices';
 import { Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
-import { setToken } from '~/services/httpServices';
 import { useSession } from '~/contexts/SessionContext';
 
 type FormData = {

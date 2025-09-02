@@ -79,7 +79,6 @@ const ProfilePage = () => {
     { title: 'Update Profile', icon: Feather, iconName: 'settings' },
     { title: 'Change Password', icon: Feather, iconName: 'file-text' },
   ];
-  console.log('Session: ', session);
   return (
     <SafeAreaView style={styles.container}>
       {!session ? (
