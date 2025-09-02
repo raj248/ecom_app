@@ -42,6 +42,7 @@ const ProductScreen = () => {
         setProduct(resProduct);
         setAttributes(resAttributes);
         setRelatedProducts(resRelated);
+        console.log('Product: ', resProduct);
       } catch (err) {
         Toast.show({ type: 'error', text1: 'Failed to load product' });
       }
@@ -113,6 +114,20 @@ const ProductScreen = () => {
   if (!product) {
     return <Text>Loading...</Text>;
   }
+
+  // helpers: build maps for quick lookup
+  // 🔎 resolve attribute ID → name (localized)
+  const getAttributeName = (attrId: string) => {
+    const attr = attributes.find((a) => a._id === attrId);
+    return attr?.name?.en || attr?.title?.en || attrId;
+  };
+
+  // 🔎 resolve variant option ID → name
+  const getVariantName = (attrId: string, variantId: string) => {
+    const attr = attributes.find((a) => a._id === attrId);
+    const variant = attr?.variants.find((v) => v._id === variantId);
+    return variant?.name?.en || variantId;
+  };
 
   return (
     <ScrollView>
@@ -281,6 +296,75 @@ const ProductScreen = () => {
           <Text style={{ textAlign: 'center' }}>Share</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Variants Section */}
+      {product.isCombination && variants.length > 0 && (
+        <View style={{ marginTop: 16 }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: '#333', marginBottom: 8 }}>
+            Available Variants
+          </Text>
+
+          {variants.map((variant, idx) => (
+            <TouchableOpacity
+              key={idx}
+              onPress={() => {
+                setSelectVariant(variant);
+                setImg(variant.image || null);
+                setStock(variant.quantity || 0);
+                setPrice(variant.price || 0);
+                setOriginalPrice(variant.originalPrice || variant.price || 0);
+              }}
+              style={{
+                borderWidth: 1,
+                borderColor: selectVariant === variant ? '#000' : '#e5e7eb',
+                borderRadius: 12,
+                padding: 12,
+                marginBottom: 10,
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 12,
+                backgroundColor: selectVariant === variant ? '#f9fafb' : '#fff',
+              }}>
+              {/* Variant image */}
+              {variant.image && (
+                <Image
+                  source={{ uri: variant.image }}
+                  style={{ width: 60, height: 60, borderRadius: 8 }}
+                />
+              )}
+
+              <View style={{ flex: 1 }}>
+                {/* Render attribute name + variant value */}
+                {Object.entries(variant)
+                  .filter(
+                    ([key]) =>
+                      ![
+                        'originalPrice',
+                        'price',
+                        'quantity',
+                        'discount',
+                        'productId',
+                        'sku',
+                        'barcode',
+                        'image',
+                      ].includes(key)
+                  )
+                  .map(([attrId, variantId]) => (
+                    <Text key={attrId} style={{ fontSize: 14, color: '#374151' }}>
+                      {getAttributeName(attrId)}: {getVariantName(attrId, String(variantId))}
+                    </Text>
+                  ))}
+
+                {/* Price + Stock */}
+                <Text style={{ fontSize: 14, fontWeight: '500', color: '#111', marginTop: 4 }}>
+                  ₹ {variant.price}
+                </Text>
+                <Text style={{ fontSize: 12, color: '#6b7280' }}>Stock: {variant.quantity}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
     </ScrollView>
   );
 };

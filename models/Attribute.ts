@@ -5,16 +5,19 @@ export type LocalizedText = {
 };
 
 export interface AttributeVariant {
+  _id: string;
   name: LocalizedText;
   status: 'show' | 'hide';
 }
 
+export type AttributeOption = 'dropdown' | 'radio' | 'checkbox';
 export interface Attribute {
   _id: string;
   title: LocalizedText;
   name: LocalizedText;
   variants: AttributeVariant[];
-  option: 'dropdown' | 'radio' | 'checkbox';
+  option: AttributeOption;
+  values: LocalizedText[];
   type: 'attribute' | 'extra';
   status: 'show' | 'hide';
   createdAt: string;
