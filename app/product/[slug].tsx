@@ -1,6 +1,7 @@
 // app/product/[slug].tsx
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { Text } from '~/components/nativewindui/Text';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import Share from 'react-native-share';
@@ -9,6 +10,7 @@ import AttributeServices from '~/services/AttributeServices';
 import ProductServices from '~/services/ProductServices';
 import { Product } from '~/models/Product';
 import { Attribute } from '~/models/Attribute';
+import QuantitySelector from '~/components/QuantitySelector';
 
 const ProductScreen = () => {
   const { slug } = useLocalSearchParams<{ slug: string }>();
@@ -25,6 +27,8 @@ const ProductScreen = () => {
   const [discount, setDiscount] = useState(0);
   const [selectVariant, setSelectVariant] = useState<any>({});
   const [variants, setVariants] = useState<any[]>([]);
+
+  const [amount, setAmount] = useState(1);
 
   // ✅ fetch product details
   useEffect(() => {
@@ -86,11 +90,11 @@ const ProductScreen = () => {
   const handleAddToCart = () => {
     if (!product) return;
     if (stock <= 0) return Toast.show({ type: 'error', text1: 'Insufficient stock' });
-
+    console.log('Categories: ', product.category);
     Toast.show({
       type: 'success',
       text1: 'Added to cart',
-      text2: `${product.title?.en || 'Product'} - ${price}`,
+      text2: `${amount} ${product.title?.en || 'Product'} - for ${price * amount}`,
     });
   };
 
@@ -116,6 +120,28 @@ const ProductScreen = () => {
       {img && <Image source={{ uri: img }} style={{ width: '100%', height: 300 }} />}
       <View style={{ padding: 16 }}>
         <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{product.title?.en || 'Untitled'}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 4 }}>
+          <View
+            style={{
+              backgroundColor: stock <= 5 ? '#fee2e2' : '#dcfce7', // light red if low, green if ok
+              paddingHorizontal: 10,
+              paddingVertical: 4,
+              borderRadius: 6,
+            }}>
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: 'bold',
+                color: stock <= 5 ? '#dc2626' : '#16a34a', // red text if low, green otherwise
+              }}>
+              Stock: {stock}
+            </Text>
+          </View>
+        </View>
+
+        <Text className="my-1 text-gray-500" variant={'footnote'}>
+          {product.description?.en || 'No description'}
+        </Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 8 }}>
           <Text style={{ fontSize: 18, fontWeight: '600', color: '#000' }}>
             ₹ {price.toFixed(2)}
@@ -137,16 +163,23 @@ const ProductScreen = () => {
           )}
         </View>
 
-        <TouchableOpacity
-          onPress={handleAddToCart}
-          style={{
-            backgroundColor: '#000',
-            padding: 12,
-            borderRadius: 8,
-            marginVertical: 8,
-          }}>
-          <Text style={{ color: '#fff', textAlign: 'center' }}>Add to Cart</Text>
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+          {/* <View style={{ flexDirection: 'row', alignItems: 'center' }}> */}
+          <QuantitySelector amount={amount} setAmount={setAmount} />
+
+          <TouchableOpacity
+            onPress={handleAddToCart}
+            style={{
+              backgroundColor: '#000',
+              padding: 12,
+              borderRadius: 8,
+              marginVertical: 8,
+              width: '50%',
+              alignItems: 'center',
+            }}>
+            <Text style={{ color: '#fff', textAlign: 'center' }}>Add to Cart</Text>
+          </TouchableOpacity>
+        </View>
 
         <TouchableOpacity
           onPress={handleShare}
@@ -158,6 +191,98 @@ const ProductScreen = () => {
           }}>
           <Text style={{ textAlign: 'center' }}>Share</Text>
         </TouchableOpacity>
+        {/* Categories and Tags */}
+        {/* Category & Tags Section */}
+        <View style={{ marginTop: 16 }}>
+          {/* Primary Category */}
+          {product.category && (
+            <View style={{ marginBottom: 8 }}>
+              <Text style={{ fontSize: 16, fontWeight: '600', color: '#333', marginBottom: 4 }}>
+                Category
+              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  gap: 6,
+                }}>
+                <View
+                  style={{
+                    backgroundColor: '#dbeafe',
+                    paddingHorizontal: 10,
+                    paddingVertical: 4,
+                    borderRadius: 12,
+                  }}>
+                  <Text style={{ fontSize: 14, color: '#1d4ed8', fontWeight: '500' }}>
+                    {product.category?.name || 'Uncategorized'}
+                  </Text>
+                </View>
+              </View>
+            </View>
+          )}
+
+          {/* Multiple Categories */}
+          {product.categories && product.categories.length > 0 && (
+            <View style={{ marginBottom: 8 }}>
+              <Text style={{ fontSize: 16, fontWeight: '600', color: '#333', marginBottom: 4 }}>
+                Categories
+              </Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+                {product.categories.map((cat) => (
+                  <View
+                    key={cat._id}
+                    style={{
+                      backgroundColor: '#fef3c7',
+                      paddingHorizontal: 10,
+                      paddingVertical: 4,
+                      borderRadius: 12,
+                      marginRight: 6,
+                      marginBottom: 6,
+                    }}>
+                    <Text style={{ fontSize: 14, color: '#b45309', fontWeight: '500' }}>
+                      {cat.name}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {/* Tags */}
+          {product.tag && product.tag.length > 0 && (
+            <View>
+              <Text style={{ fontSize: 16, fontWeight: '600', color: '#333', marginBottom: 4 }}>
+                Tags
+              </Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                {product.tag
+                  .flatMap((t) => {
+                    let parsed: string[] = [];
+                    try {
+                      parsed = JSON.parse(t); // ✅ parse JSON string into array
+                    } catch (e) {
+                      parsed = [t]; // fallback if it's not JSON
+                    }
+                    return parsed;
+                  })
+                  .map((tag, idx) => (
+                    <View
+                      key={idx}
+                      style={{
+                        backgroundColor: '#f3f4f6',
+                        paddingHorizontal: 10,
+                        paddingVertical: 4,
+                        borderRadius: 12,
+                        marginRight: 6,
+                        marginBottom: 6,
+                      }}>
+                      <Text style={{ fontSize: 14, color: '#374151' }}>#{tag}</Text>
+                    </View>
+                  ))}
+              </View>
+            </View>
+          )}
+        </View>
       </View>
     </ScrollView>
   );

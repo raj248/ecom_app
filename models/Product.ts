@@ -1,9 +1,6 @@
-// models/Product.ts
-export interface Category {
-  _id: string;
-  name?: string; // optional if your backend adds more fields later
-}
+import { Category } from './Category';
 
+// models/Product.ts
 export interface Prices {
   originalPrice: number;
   price: number;

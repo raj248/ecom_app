@@ -19,6 +19,7 @@ import { useColorScheme, useInitialAndroidBarSync } from '~/lib/useColorScheme';
 import { NAV_THEME } from '~/theme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SessionProvider } from '~/contexts/SessionContext';
+import Toast from 'react-native-toast-message';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -50,6 +51,7 @@ export default function RootLayout() {
                     <Stack.Screen name="product/[slug]" options={{ animation: 'simple_push' }} />
                     <Stack.Screen name="modal" options={MODAL_OPTIONS} />
                   </Stack>
+                  <Toast avoidKeyboard topOffset={80} />
                 </NavThemeProvider>
               </ActionSheetProvider>
             </BottomSheetModalProvider>
