@@ -18,6 +18,7 @@ import { cn } from '~/lib/cn';
 import { useColorScheme, useInitialAndroidBarSync } from '~/lib/useColorScheme';
 import { NAV_THEME } from '~/theme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { SessionProvider } from '~/contexts/SessionContext';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -39,18 +40,20 @@ export default function RootLayout() {
       {/* <ExampleProvider> */}
 
       <QueryClientProvider client={queryClient}>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <BottomSheetModalProvider>
-            <ActionSheetProvider>
-              <NavThemeProvider value={NAV_THEME[colorScheme]}>
-                <Stack screenOptions={SCREEN_OPTIONS}>
-                  <Stack.Screen name="(tabs)" options={TABS_OPTIONS} />
-                  <Stack.Screen name="modal" options={MODAL_OPTIONS} />
-                </Stack>
-              </NavThemeProvider>
-            </ActionSheetProvider>
-          </BottomSheetModalProvider>
-        </GestureHandlerRootView>
+        <SessionProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <BottomSheetModalProvider>
+              <ActionSheetProvider>
+                <NavThemeProvider value={NAV_THEME[colorScheme]}>
+                  <Stack screenOptions={SCREEN_OPTIONS}>
+                    <Stack.Screen name="(tabs)" options={TABS_OPTIONS} />
+                    <Stack.Screen name="modal" options={MODAL_OPTIONS} />
+                  </Stack>
+                </NavThemeProvider>
+              </ActionSheetProvider>
+            </BottomSheetModalProvider>
+          </GestureHandlerRootView>
+        </SessionProvider>
       </QueryClientProvider>
 
       {/* </ExampleProvider> */}

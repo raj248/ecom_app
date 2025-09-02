@@ -14,7 +14,8 @@ import { useRouter } from 'expo-router';
 import OrderServices from '~/services/OrderServices';
 import useGetSetting from '~/hooks/useGetSetting';
 import LoginPage from '../login';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSession } from '~/contexts/SessionContext';
 // const FeatheredIconName = keyof typeof Feather['name'];
 
 type CardProps = {
@@ -34,31 +35,41 @@ const StatCard = ({ title, quantity, Icon, color, bgColor }: CardProps) => (
 );
 
 const ProfilePage = () => {
+  const { session, logout, loading: loadingSession } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const { storeCustomizationSetting } = useGetSetting();
   const [orderData, setOrderData] = useState<any>(null);
-  const token =
-    // const user = useUserStore((state) => state.user);
-    // const id = user?._id;
 
-    useEffect(() => {
-      (async () => {
-        try {
-          const res = await OrderServices.getOrderCustomer('id');
-          setOrderData(res);
-        } catch (err: any) {
-          console.error(err);
-          Alert.alert('Error', err?.message || 'Failed to fetch orders');
-        } finally {
-          setLoading(false);
-        }
-      })();
-    }, []);
+  useEffect(() => {
+    if (!session) {
+      setOrderData(null);
+      return;
+    }
+
+    const fetchOrders = async () => {
+      setLoading(true);
+      try {
+        if (!session.token) return;
+        console.log('Requesting with token for ', session.name);
+        const res = await OrderServices.getOrderCustomer();
+        setOrderData(res);
+      } catch (err: any) {
+        console.error(err);
+        Alert.alert('Error', err?.message || 'Failed to fetch orders');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, [session]); // 👈 refetch when session changes
 
   const handleLogout = () => {
-    Alert.alert('Logout', 'You have been logged out');
-    router.push('/');
+    logout();
+    setOrderData(null);
+    // Alert.alert('Logout', 'You have been logged out');
+    // router.push('/');
   };
 
   const menuItems = [
@@ -68,10 +79,10 @@ const ProfilePage = () => {
     { title: 'Update Profile', icon: Feather, iconName: 'settings' },
     { title: 'Change Password', icon: Feather, iconName: 'file-text' },
   ];
-
+  console.log('Session: ', session);
   return (
     <SafeAreaView style={styles.container}>
-      {true ? (
+      {!session ? (
         <LoginPage />
       ) : (
         <ScrollView contentContainerStyle={styles.scrollContainer}>

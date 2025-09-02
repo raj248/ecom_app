@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import CustomerServices from '~/services/CustomerServices';
+import CustomerServices, { LoginCustomerResponse } from '~/services/CustomerServices';
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
+import { setToken } from '~/services/httpServices';
+import { useSession } from '~/contexts/SessionContext';
 
 type FormData = {
   email?: string;
@@ -23,7 +25,7 @@ export const useLoginSubmit = (
     formState: { errors },
   } = useForm<FormData>();
   const [loading, setLoading] = useState(false);
-
+  const { login } = useSession();
   const submitHandler = async (data: FormData) => {
     setLoading(true);
     try {
@@ -40,19 +42,29 @@ export const useLoginSubmit = (
         Alert.alert('Success', res.message);
       } else {
         // Login mode
-        res = await CustomerServices.loginCustomer({
+        res = (await CustomerServices.loginCustomer({
           email: data.email,
           password: data.password,
-        });
+        })) as LoginCustomerResponse;
 
         // Save token in AsyncStorage
-        await AsyncStorage.setItem('token', res.token);
-        console.log(res.token);
-        Alert.alert('Success', 'Logged in successfully');
+        // await AsyncStorage.setItem('token', res.token);
+        // await AsyncStorage.setItem('refreshToken', res.refreshToken);
+        // await AsyncStorage.setItem('_id', res._id);
+        // if (res.name) await AsyncStorage.setItem('name', res.name);
+        // if (res.email) await AsyncStorage.setItem('email', res.email);
+        // if (res.address) await AsyncStorage.setItem('address', res.address);
+        // if (res.phone) await AsyncStorage.setItem('phone', res.phone);
+        // if (res.image) await AsyncStorage.setItem('image', res.image);
+
+        // setToken(res.token);
+        // console.log(res.token);
+        await login(res);
+        // Alert.alert('Success', 'Logged in successfully');
 
         // Navigate using Expo Router
         // router.push('/dashboard');
-        router.push('/(tabs)');
+        // router.push('/(tabs)');
       }
     } catch (err: any) {
       console.error(err);
