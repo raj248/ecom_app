@@ -47,6 +47,7 @@ export default function RootLayout() {
                 <NavThemeProvider value={NAV_THEME[colorScheme]}>
                   <Stack screenOptions={SCREEN_OPTIONS}>
                     <Stack.Screen name="(tabs)" options={TABS_OPTIONS} />
+                    <Stack.Screen name="product/[slug]" options={{ animation: 'simple_push' }} />
                     <Stack.Screen name="modal" options={MODAL_OPTIONS} />
                   </Stack>
                 </NavThemeProvider>

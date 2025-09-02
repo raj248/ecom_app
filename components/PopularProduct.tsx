@@ -3,6 +3,7 @@ import { FlatList, View } from 'react-native';
 import ProductCard from '~/components/ProductCard';
 import ProductServices from '~/services/ProductServices';
 import { Product } from '~/models/Product';
+import { router } from 'expo-router';
 
 export default function PopularProducts() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -19,7 +20,12 @@ export default function PopularProducts() {
       data={products}
       keyExtractor={(item) => item._id}
       numColumns={2}
-      renderItem={({ item }) => <ProductCard product={item} />}
+      renderItem={({ item }) => (
+        <ProductCard
+          product={item}
+          onPress={(product) => router.push(`/product/${product.slug}`)}
+        />
+      )}
       contentContainerStyle={{ padding: 8 }}
       scrollEnabled={false}
     />
