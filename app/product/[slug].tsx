@@ -143,9 +143,7 @@ const ProductScreen = () => {
           {product.description?.en || 'No description'}
         </Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 8 }}>
-          <Text style={{ fontSize: 18, fontWeight: '600', color: '#000' }}>
-            ₹ {price.toFixed(2)}
-          </Text>
+          <Text style={{ fontSize: 18, fontWeight: '600', color: '#000' }}>₹ {price}</Text>
 
           {discount > 0 && (
             <>
@@ -156,7 +154,7 @@ const ProductScreen = () => {
                   marginLeft: 8,
                   textDecorationLine: 'line-through',
                 }}>
-                ₹ {originalPrice.toFixed(2)}
+                ₹ {originalPrice}
               </Text>
               <Text style={{ fontSize: 16, color: 'red', marginLeft: 8 }}>({discount}% off)</Text>
             </>
