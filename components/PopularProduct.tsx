@@ -25,7 +25,10 @@ export default function PopularProducts() {
           product={item}
           onPress={() => {}}
           onTap={() => {
-            router.push(`/product/${item.slug}`);
+            router.push({
+              pathname: '/product/[slug]',
+              params: { slug: item.slug, id: item._id },
+            });
           }}
         />
       )}

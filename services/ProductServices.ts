@@ -26,6 +26,9 @@ const ProductServices = {
   getProductBySlug: async (slug: string): Promise<Product> => {
     return requests.get<Product>(`/products/product/${slug}`);
   },
+  getProductById: async (id: string): Promise<Product> => {
+    return requests.post<Product>(`/products/${id}`);
+  },
 };
 
 export default ProductServices;

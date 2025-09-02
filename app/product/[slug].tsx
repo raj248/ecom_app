@@ -13,8 +13,8 @@ import { Attribute } from '~/models/Attribute';
 import QuantitySelector from '~/components/QuantitySelector';
 
 const ProductScreen = () => {
-  const { slug } = useLocalSearchParams<{ slug: string }>();
-
+  const { slug, id } = useLocalSearchParams<{ slug: string; id: string }>();
+  console.log('ID: ', id);
   const [product, setProduct] = useState<Product | null>(null);
   const [attributes, setAttributes] = useState<Attribute[]>([]);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
@@ -34,7 +34,7 @@ const ProductScreen = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const resProduct = await ProductServices.getProductBySlug(slug);
+        const resProduct = await ProductServices.getProductById(id);
         const resAttributes = await AttributeServices.getAllAttributes();
         const resRelated = (await ProductServices.getShowingStoreProducts({ slug }))
           .relatedProducts;
@@ -181,17 +181,6 @@ const ProductScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity
-          onPress={handleShare}
-          style={{
-            backgroundColor: '#eee',
-            padding: 12,
-            borderRadius: 8,
-            marginVertical: 8,
-          }}>
-          <Text style={{ textAlign: 'center' }}>Share</Text>
-        </TouchableOpacity>
-        {/* Categories and Tags */}
         {/* Category & Tags Section */}
         <View style={{ marginTop: 16 }}>
           {/* Primary Category */}
@@ -214,7 +203,7 @@ const ProductScreen = () => {
                     borderRadius: 12,
                   }}>
                   <Text style={{ fontSize: 14, color: '#1d4ed8', fontWeight: '500' }}>
-                    {product.category?.name || 'Uncategorized'}
+                    {product.category?.name.en || 'Uncategorized'}
                   </Text>
                 </View>
               </View>
@@ -222,7 +211,7 @@ const ProductScreen = () => {
           )}
 
           {/* Multiple Categories */}
-          {product.categories && product.categories.length > 0 && (
+          {/* {product.categories && product.categories.length > 0 && (
             <View style={{ marginBottom: 8 }}>
               <Text style={{ fontSize: 16, fontWeight: '600', color: '#333', marginBottom: 4 }}>
                 Categories
@@ -240,13 +229,13 @@ const ProductScreen = () => {
                       marginBottom: 6,
                     }}>
                     <Text style={{ fontSize: 14, color: '#b45309', fontWeight: '500' }}>
-                      {cat.name}
+                      {cat.name.en}
                     </Text>
                   </View>
                 ))}
               </View>
             </View>
-          )}
+          )} */}
 
           {/* Tags */}
           {product.tag && product.tag.length > 0 && (
@@ -283,6 +272,16 @@ const ProductScreen = () => {
             </View>
           )}
         </View>
+        <TouchableOpacity
+          onPress={handleShare}
+          style={{
+            backgroundColor: '#eee',
+            padding: 12,
+            borderRadius: 8,
+            marginVertical: 8,
+          }}>
+          <Text style={{ textAlign: 'center' }}>Share</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );

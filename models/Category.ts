@@ -5,7 +5,7 @@ export type CategoryStatus = 'show' | 'hide';
 
 export interface Category {
   _id: string; // MongoDB ObjectId
-  name: string; // multilingual names
+  name: LocalizedString; // multilingual names
   description?: LocalizedString; // optional
   slug?: string;
   parentId?: string;
