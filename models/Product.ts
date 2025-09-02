@@ -27,7 +27,7 @@ export interface Product {
   tag?: string[];
   prices: Prices;
 
-  variants?: Record<string, any>[];
+  variants?: Variant[];
   isCombination: boolean;
 
   average_rating?: number;
@@ -58,4 +58,20 @@ export interface GetShowingStoreProductsResponse {
   popularProducts: Product[];
   relatedProducts: Product[];
   discountedProducts: Product[];
+}
+
+export interface Variant {
+  // Dynamic attribute-value mapping (attributeId -> valueId)
+  [attributeId: string]: string | number | undefined;
+
+  // Fixed fields
+  originalPrice: number;
+  price: number;
+  quantity: number;
+  discount: number;
+
+  productId: string;
+  sku?: string;
+  barcode?: string;
+  image?: string;
 }

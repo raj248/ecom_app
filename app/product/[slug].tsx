@@ -8,13 +8,13 @@ import Share from 'react-native-share';
 
 import AttributeServices from '~/services/AttributeServices';
 import ProductServices from '~/services/ProductServices';
-import { Product } from '~/models/Product';
+import { Product, Variant } from '~/models/Product';
 import { Attribute } from '~/models/Attribute';
 import QuantitySelector from '~/components/QuantitySelector';
+import RelatedProducts from '~/components/RelatedProduct';
 
 const ProductScreen = () => {
   const { slug, id } = useLocalSearchParams<{ slug: string; id: string }>();
-  console.log('ID: ', id);
   const [product, setProduct] = useState<Product | null>(null);
   const [attributes, setAttributes] = useState<Attribute[]>([]);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
@@ -26,7 +26,8 @@ const ProductScreen = () => {
   const [stock, setStock] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [selectVariant, setSelectVariant] = useState<any>({});
-  const [variants, setVariants] = useState<any[]>([]);
+  const [variants, setVariants] = useState<Variant[]>([]);
+  const [selectedAttrs, setSelectedAttrs] = useState<Record<string, string>>({});
 
   const [amount, setAmount] = useState(1);
 
@@ -35,14 +36,14 @@ const ProductScreen = () => {
     const fetchData = async () => {
       try {
         const resProduct = await ProductServices.getProductById(id);
-        const resAttributes = await AttributeServices.getAllAttributes();
+        const resAttributes = await AttributeServices.getShowingAttributes();
         const resRelated = (await ProductServices.getShowingStoreProducts({ slug }))
           .relatedProducts;
 
         setProduct(resProduct);
         setAttributes(resAttributes);
         setRelatedProducts(resRelated);
-        console.log('Product: ', resProduct);
+        // console.log('Product: ', resProduct);
       } catch (err) {
         Toast.show({ type: 'error', text1: 'Failed to load product' });
       }
@@ -56,12 +57,34 @@ const ProductScreen = () => {
 
     const hasVariants = Array.isArray(product.variants) && product.variants.length > 0;
 
-    if (hasVariants) {
-      const firstVariant = product.variants![0]; // ✅ safe since we checked length
-      setVariants(product.variants || []); // ✅ fallback to empty array
-      setStock(firstVariant?.quantity || 0);
+    if (hasVariants && product.isCombination) {
+      const firstVariant = product.variants![0];
+      setVariants(product.variants || []);
+
+      // ✅ set default attributes from first variant
+      const defaultAttrs: Record<string, string> = {};
+      Object.entries(firstVariant).forEach(([key, value]) => {
+        if (
+          ![
+            'originalPrice',
+            'price',
+            'quantity',
+            'discount',
+            'productId',
+            'sku',
+            'barcode',
+            'image',
+          ].includes(key)
+        ) {
+          defaultAttrs[key] = String(value);
+        }
+      });
+      setSelectedAttrs(defaultAttrs);
+
+      // ✅ update product state
       setSelectVariant(firstVariant);
       setImg(firstVariant?.image || null);
+      setStock(firstVariant?.quantity || 0);
 
       const price = firstVariant?.price || 0;
       const originalPrice = firstVariant?.originalPrice || price;
@@ -72,7 +95,8 @@ const ProductScreen = () => {
       setPrice(price);
       setOriginalPrice(originalPrice);
     } else {
-      setVariants([]); // ✅ reset when no variants
+      // fallback to single product case
+      setVariants([]);
       setStock(product?.stock || 0);
       setImg(product?.image?.[0] || null);
 
@@ -86,6 +110,22 @@ const ProductScreen = () => {
       setOriginalPrice(originalPrice);
     }
   }, [product]);
+
+  useEffect(() => {
+    if (Object.keys(selectedAttrs).length === 0) return;
+
+    const match = variants.find((variant) =>
+      Object.entries(selectedAttrs).every(([attrId, value]) => String(variant[attrId]) === value)
+    );
+
+    if (match) {
+      setSelectVariant(match);
+      setImg(match.image || null);
+      setStock(match.quantity || 0);
+      setPrice(match.price || 0);
+      setOriginalPrice(match.originalPrice || match.price || 0);
+    }
+  }, [selectedAttrs, variants]);
 
   // ✅ add to cart (dummy)
   const handleAddToCart = () => {
@@ -104,11 +144,42 @@ const ProductScreen = () => {
     try {
       await Share.open({
         message: `Check out this product: ${product?.title?.en || ''}`,
-        url: `https://your-app-url.com/product/${product?.slug}`,
+        url: `https://demo.zenextech.in/product/${product?.slug}`,
       });
     } catch (err) {
       console.log('Share error:', err);
     }
+  };
+
+  // helpers: build map of attributes → unique values
+  const buildAttributeOptions = (variants: any[]) => {
+    const options: Record<string, string[]> = {};
+    variants.forEach((variant) => {
+      Object.entries(variant).forEach(([attrId, value]) => {
+        if (
+          ![
+            'originalPrice',
+            'price',
+            'quantity',
+            'discount',
+            'productId',
+            'sku',
+            'barcode',
+            'image',
+          ].includes(attrId)
+        ) {
+          if (!options[attrId]) options[attrId] = [];
+          if (!options[attrId].includes(String(value))) {
+            options[attrId].push(String(value));
+          }
+        }
+      });
+    });
+    return options;
+  };
+
+  const handleSelectAttr = (attrId: string, value: string) => {
+    setSelectedAttrs((prev) => ({ ...prev, [attrId]: value }));
   };
 
   if (!product) {
@@ -154,9 +225,6 @@ const ProductScreen = () => {
           </View>
         </View>
 
-        <Text className="my-1 text-gray-500" variant={'footnote'}>
-          {product.description?.en || 'No description'}
-        </Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 8 }}>
           <Text style={{ fontSize: 18, fontWeight: '600', color: '#000' }}>₹ {price}</Text>
 
@@ -176,6 +244,48 @@ const ProductScreen = () => {
           )}
         </View>
 
+        {/* Attribute-based selectors */}
+        {product.isCombination && variants.length > 0 && (
+          <View style={{ marginTop: 16 }}>
+            {Object.entries(buildAttributeOptions(variants)).map(([attrId, values]) => (
+              <View key={attrId} style={{ marginBottom: 12 }}>
+                <Text style={{ fontSize: 16, fontWeight: '600', marginBottom: 8 }}>
+                  {getAttributeName(attrId)}
+                </Text>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                  {values.map((val) => (
+                    <TouchableOpacity
+                      key={val}
+                      onPress={() => handleSelectAttr(attrId, val)}
+                      style={{
+                        paddingHorizontal: 12,
+                        paddingVertical: 6,
+                        borderRadius: 8,
+                        borderWidth: 1,
+                        borderColor: selectedAttrs[attrId] === val ? '#10B981' : '#ccc',
+                        backgroundColor: selectedAttrs[attrId] === val ? '#10B981' : '#fff',
+                        marginRight: 8,
+                        marginBottom: 8,
+                      }}>
+                      <Text
+                        style={{
+                          color: selectedAttrs[attrId] === val ? '#fff' : '#000',
+                          fontSize: 14,
+                        }}>
+                        {getVariantName(attrId, val)}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
+        {/* Product description */}
+        <Text className="my-1 text-gray-500" variant={'footnote'}>
+          {product.description?.en || 'No description'}
+        </Text>
+
         <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
           {/* <View style={{ flexDirection: 'row', alignItems: 'center' }}> */}
           <QuantitySelector amount={amount} setAmount={setAmount} />
@@ -184,13 +294,16 @@ const ProductScreen = () => {
             onPress={handleAddToCart}
             style={{
               backgroundColor: '#000',
-              padding: 12,
+              padding: 7,
+              paddingVertical: 8,
               borderRadius: 8,
               marginVertical: 8,
-              width: '50%',
+              width: '55%',
               alignItems: 'center',
             }}>
-            <Text style={{ color: '#fff', textAlign: 'center' }}>Add to Cart</Text>
+            <Text style={{ color: '#fff', textAlign: 'center', fontSize: 16, fontWeight: '600' }}>
+              Add to Cart
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -198,9 +311,17 @@ const ProductScreen = () => {
         <View style={{ marginTop: 16 }}>
           {/* Primary Category */}
           {product.category && (
-            <View style={{ marginBottom: 8 }}>
-              <Text style={{ fontSize: 16, fontWeight: '600', color: '#333', marginBottom: 4 }}>
-                Category
+            <View
+              style={{
+                marginBottom: 8,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'flex-start',
+                gap: 8,
+                flexWrap: 'wrap',
+              }}>
+              <Text style={{ fontSize: 16, fontWeight: '700', color: '#333', marginBottom: 4 }}>
+                Category:
               </Text>
               <View
                 style={{
@@ -211,11 +332,11 @@ const ProductScreen = () => {
                 <View
                   style={{
                     backgroundColor: '#dbeafe',
-                    paddingHorizontal: 10,
+                    paddingHorizontal: 8,
                     paddingVertical: 4,
                     borderRadius: 12,
                   }}>
-                  <Text style={{ fontSize: 14, color: '#1d4ed8', fontWeight: '500' }}>
+                  <Text style={{ fontSize: 12, color: '#1d4ed8', fontWeight: '500' }}>
                     {product.category?.name.en || 'Uncategorized'}
                   </Text>
                 </View>
@@ -253,9 +374,9 @@ const ProductScreen = () => {
           {/* Tags */}
           {product.tag && product.tag.length > 0 && (
             <View>
-              <Text style={{ fontSize: 16, fontWeight: '600', color: '#333', marginBottom: 4 }}>
+              {/* <Text style={{ fontSize: 16, fontWeight: '600', color: '#333', marginBottom: 4 }}>
                 Tags
-              </Text>
+              </Text> */}
               <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                 {product.tag
                   .flatMap((t) => {
@@ -278,93 +399,28 @@ const ProductScreen = () => {
                         marginRight: 6,
                         marginBottom: 6,
                       }}>
-                      <Text style={{ fontSize: 14, color: '#374151' }}>#{tag}</Text>
+                      <Text style={{ fontSize: 14, color: '#374151', fontWeight: '700' }}>
+                        #{tag}
+                      </Text>
                     </View>
                   ))}
               </View>
             </View>
           )}
         </View>
-        <TouchableOpacity
-          onPress={handleShare}
-          style={{
-            backgroundColor: '#eee',
-            padding: 12,
-            borderRadius: 8,
-            marginVertical: 8,
-          }}>
-          <Text style={{ textAlign: 'center' }}>Share</Text>
-        </TouchableOpacity>
       </View>
 
-      {/* Variants Section */}
-      {product.isCombination && variants.length > 0 && (
-        <View style={{ marginTop: 16 }}>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: '#333', marginBottom: 8 }}>
-            Available Variants
-          </Text>
-
-          {variants.map((variant, idx) => (
-            <TouchableOpacity
-              key={idx}
-              onPress={() => {
-                setSelectVariant(variant);
-                setImg(variant.image || null);
-                setStock(variant.quantity || 0);
-                setPrice(variant.price || 0);
-                setOriginalPrice(variant.originalPrice || variant.price || 0);
-              }}
-              style={{
-                borderWidth: 1,
-                borderColor: selectVariant === variant ? '#000' : '#e5e7eb',
-                borderRadius: 12,
-                padding: 12,
-                marginBottom: 10,
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 12,
-                backgroundColor: selectVariant === variant ? '#f9fafb' : '#fff',
-              }}>
-              {/* Variant image */}
-              {variant.image && (
-                <Image
-                  source={{ uri: variant.image }}
-                  style={{ width: 60, height: 60, borderRadius: 8 }}
-                />
-              )}
-
-              <View style={{ flex: 1 }}>
-                {/* Render attribute name + variant value */}
-                {Object.entries(variant)
-                  .filter(
-                    ([key]) =>
-                      ![
-                        'originalPrice',
-                        'price',
-                        'quantity',
-                        'discount',
-                        'productId',
-                        'sku',
-                        'barcode',
-                        'image',
-                      ].includes(key)
-                  )
-                  .map(([attrId, variantId]) => (
-                    <Text key={attrId} style={{ fontSize: 14, color: '#374151' }}>
-                      {getAttributeName(attrId)}: {getVariantName(attrId, String(variantId))}
-                    </Text>
-                  ))}
-
-                {/* Price + Stock */}
-                <Text style={{ fontSize: 14, fontWeight: '500', color: '#111', marginTop: 4 }}>
-                  ₹ {variant.price}
-                </Text>
-                <Text style={{ fontSize: 12, color: '#6b7280' }}>Stock: {variant.quantity}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
+      <TouchableOpacity
+        onPress={handleShare}
+        style={{
+          backgroundColor: '#eee',
+          padding: 12,
+          borderRadius: 8,
+          marginVertical: 8,
+        }}>
+        <Text style={{ textAlign: 'center' }}>Share</Text>
+      </TouchableOpacity>
+      <RelatedProducts relatedProducts={relatedProducts} />
     </ScrollView>
   );
 };
