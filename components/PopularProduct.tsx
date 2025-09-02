@@ -23,7 +23,10 @@ export default function PopularProducts() {
       renderItem={({ item }) => (
         <ProductCard
           product={item}
-          onPress={(product) => router.push(`/product/${product.slug}`)}
+          onPress={() => {}}
+          onTap={() => {
+            router.push(`/product/${item.slug}`);
+          }}
         />
       )}
       contentContainerStyle={{ padding: 8 }}

@@ -24,7 +24,7 @@ const ProductServices = {
   },
 
   getProductBySlug: async (slug: string): Promise<Product> => {
-    return requests.get<Product>(`/products/${slug}`);
+    return requests.get<Product>(`/products/product/${slug}`);
   },
 };
 

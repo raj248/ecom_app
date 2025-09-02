@@ -4,10 +4,11 @@ import { Product } from '~/models/Product';
 
 interface ProductCardProps {
   product: Product;
-  onPress?: (product: Product) => void;
+  onPress?: (product: Product) => void; // for add-to-cart button
+  onTap?: (product: Product) => void; // for card tap → navigate to detail
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, onPress, onTap }) => {
   const { title, prices, stock, image } = product;
   const rupee = '₹';
 
@@ -17,7 +18,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
       : null;
 
   return (
-    <View
+    <TouchableOpacity
+      activeOpacity={0.9}
+      onPress={() => onTap?.(product)} // 🔥 call onTap when the card is pressed
       style={{
         flex: 1,
         backgroundColor: '#fff',
@@ -80,7 +83,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
           {prices?.price?.toFixed(2) ?? '0.00'}
         </Text>
         <TouchableOpacity
-          onPress={() => onPress?.(product)}
+          onPress={(e) => {
+            e.stopPropagation(); // ✅ prevent triggering onTap when pressing Add
+            onPress?.(product);
+          }}
           style={{
             backgroundColor: '#22c55e',
             width: 32,
@@ -92,7 +98,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
           <Text style={{ fontSize: 20, color: 'white' }}>＋</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

@@ -1,7 +1,7 @@
 // app/product/[slug].tsx
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import Share from 'react-native-share';
 
@@ -112,12 +112,30 @@ const ProductScreen = () => {
 
   return (
     <ScrollView>
+      <Stack.Screen options={{ title: product.title?.en || 'Untitled' }} />
       {img && <Image source={{ uri: img }} style={{ width: '100%', height: 300 }} />}
       <View style={{ padding: 16 }}>
         <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{product.title?.en || 'Untitled'}</Text>
-        <Text style={{ fontSize: 18, marginVertical: 8 }}>
-          ${price} {discount > 0 && <Text style={{ color: 'red' }}>({discount}% off)</Text>}
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 8 }}>
+          <Text style={{ fontSize: 18, fontWeight: '600', color: '#000' }}>
+            ₹ {price.toFixed(2)}
+          </Text>
+
+          {discount > 0 && (
+            <>
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: '#666',
+                  marginLeft: 8,
+                  textDecorationLine: 'line-through',
+                }}>
+                ₹ {originalPrice.toFixed(2)}
+              </Text>
+              <Text style={{ fontSize: 16, color: 'red', marginLeft: 8 }}>({discount}% off)</Text>
+            </>
+          )}
+        </View>
 
         <TouchableOpacity
           onPress={handleAddToCart}
