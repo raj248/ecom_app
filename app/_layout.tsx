@@ -57,6 +57,10 @@ export default function RootLayout() {
                         presentation: 'modal',
                       }}
                     />
+                    <Stack.Screen
+                      name="my-order"
+                      options={{ animation: 'simple_push', title: 'My Orders' }}
+                    />
                     <Stack.Screen name="modal" options={MODAL_OPTIONS} />
                   </Stack>
                   <Toast avoidKeyboard topOffset={80} />

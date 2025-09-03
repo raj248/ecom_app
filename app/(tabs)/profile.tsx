@@ -76,11 +76,36 @@ const ProfilePage = () => {
   };
 
   const menuItems = [
-    { title: 'Dashboard', icon: Feather, iconName: 'grid' },
-    { title: 'My Orders', icon: Feather, iconName: 'list' },
-    { title: 'My Account', icon: Feather, iconName: 'user' },
-    { title: 'Update Profile', icon: Feather, iconName: 'settings' },
-    { title: 'Change Password', icon: Feather, iconName: 'file-text' },
+    {
+      title: 'Dashboard',
+      icon: Feather,
+      onclick: () => router.push('/profile'),
+      iconName: 'grid',
+    },
+    {
+      title: 'My Orders',
+      icon: Feather,
+      onclick: () => router.push('/my-order'),
+      iconName: 'list',
+    },
+    {
+      title: 'My Account',
+      icon: Feather,
+      onclick: () => router.push('/my-order'),
+      iconName: 'user',
+    },
+    {
+      title: 'Update Profile',
+      icon: Feather,
+      onclick: () => router.push('/my-order'),
+      iconName: 'settings',
+    },
+    {
+      title: 'Change Password',
+      icon: Feather,
+      onclick: () => router.push('/my-order'),
+      iconName: 'file-text',
+    },
   ];
   return (
     <SafeAreaView style={styles.container}>
@@ -91,7 +116,7 @@ const ProfilePage = () => {
           {/* Sidebar / Menu */}
           <View style={styles.menu}>
             {menuItems.map((item) => (
-              <TouchableOpacity key={item.title} style={styles.menuItem}>
+              <TouchableOpacity key={item.title} style={styles.menuItem} onPress={item.onclick}>
                 <item.icon name={item.iconName as any} size={20} color="#10b981" />
                 <Text style={styles.menuText}>{item.title}</Text>
               </TouchableOpacity>
