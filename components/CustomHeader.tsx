@@ -1,63 +1,147 @@
-import React from 'react';
-import { View, TextInput, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // if using Expo
-// if not Expo, install react-native-vector-icons
+import React, { useEffect, useState } from 'react';
+import { View, TextInput, TouchableOpacity, FlatList, Keyboard, Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import ProductServices from '~/services/ProductServices';
+import { Product } from '~/models/Product';
+
+function useDebounce<T>(value: T, delay: number) {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+
+  return debouncedValue;
+}
 
 interface CustomHeaderProps {
   placeholder?: string;
   showBackButton?: boolean;
+  initialQuery?: string;
+  clearQuery?: boolean;
   onBackPress?: () => void;
-  onSearch?: (text: string) => void;
+  onSearch?: (text: string) => void; // 🔎 Called when search is triggered
 }
 
 const CustomHeader: React.FC<CustomHeaderProps> = ({
   placeholder = 'Search for products (e.g. fish, apple, oil)',
   showBackButton = false,
+  initialQuery,
+  clearQuery,
   onBackPress,
   onSearch,
 }) => {
-  const [query, setQuery] = React.useState('');
+  const [query, setQuery] = useState(initialQuery || '');
+  const [suggestions, setSuggestions] = useState<Product[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  const handleChange = (text: string) => {
-    setQuery(text);
-    onSearch?.(text);
+  // 🟢 Fetch suggestions as user types
+  // const debouncedQuery = useDebounce(query, 400);
+
+  // useEffect(() => {
+  //   let active = true;
+  //   if (debouncedQuery.length > 1) {
+  //     ProductServices.getShowingStoreProducts({ title: debouncedQuery })
+  //       .then((res) => setSuggestions(res.products || []))
+  //       .catch(console.log);
+  //     setShowDropdown(true);
+  //   } else {
+  //     setSuggestions([]);
+  //     setShowDropdown(false);
+  //   }
+  //   return () => {
+  //     active = false;
+  //   };
+  // }, [debouncedQuery]);
+
+  // 🔎 Trigger search (manual enter or icon press)
+
+  useEffect(() => {
+    if (!initialQuery) return;
+    triggerSearch();
+  }, []);
+
+  const triggerSearch = () => {
+    if (!query.trim()) return;
+    Keyboard.dismiss();
+    setShowDropdown(false);
+    onSearch?.(query.trim());
+    clearQuery && setQuery('');
   };
 
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#10b981', // green background
-        paddingHorizontal: 10,
-        paddingVertical: 8,
-      }}>
-      {showBackButton && (
-        <TouchableOpacity onPress={onBackPress} style={{ marginRight: 8 }}>
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-      )}
-
+    <View style={{ backgroundColor: '#10b981' }}>
+      {/* Top bar */}
       <View
         style={{
-          flex: 1,
           flexDirection: 'row',
           alignItems: 'center',
-          backgroundColor: 'white',
-          borderRadius: 8,
           paddingHorizontal: 10,
+          paddingVertical: 8,
         }}>
-        <TextInput
-          value={query}
-          onChangeText={handleChange}
-          placeholder={placeholder}
+        {showBackButton && (
+          <TouchableOpacity onPress={onBackPress} style={{ marginRight: 8 }}>
+            <Ionicons name="arrow-back" size={24} color="white" />
+          </TouchableOpacity>
+        )}
+
+        {/* Search input */}
+        <View
           style={{
             flex: 1,
-            height: 40,
-          }}
-        />
-        <Ionicons name="search" size={20} color="#888" />
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: 'white',
+            borderRadius: 8,
+            paddingHorizontal: 10,
+          }}>
+          <TextInput
+            value={query}
+            onChangeText={setQuery}
+            placeholder={placeholder}
+            returnKeyType="search"
+            onSubmitEditing={triggerSearch} // ⌨️ Enter key
+            style={{ flex: 1, height: 40 }}
+          />
+          <TouchableOpacity onPress={triggerSearch}>
+            <Ionicons name="search" size={20} color="#888" />
+          </TouchableOpacity>
+        </View>
       </View>
+
+      {/* Dropdown suggestions */}
+      {showDropdown && suggestions.length > 0 && (
+        <View
+          style={{
+            backgroundColor: 'white',
+            maxHeight: 200,
+            borderBottomLeftRadius: 8,
+            borderBottomRightRadius: 8,
+            marginHorizontal: 10,
+            shadowColor: '#000',
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+            elevation: 3,
+          }}>
+          <FlatList
+            data={suggestions}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() => {
+                  setQuery(item.title?.en || '');
+                  setShowDropdown(false);
+                  onSearch?.(item.title?.en || '');
+                }}
+                style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: '#eee' }}>
+                <Text>{item.title?.en}</Text>
+              </TouchableOpacity>
+            )}
+            keyboardShouldPersistTaps="handled"
+          />
+        </View>
+      )}
     </View>
   );
 };

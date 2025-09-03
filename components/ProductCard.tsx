@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Product } from '~/models/Product';
@@ -20,7 +21,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress, onTap }) =>
   return (
     <TouchableOpacity
       activeOpacity={0.9}
-      onPress={() => onTap?.(product)} // 🔥 call onTap when the card is pressed
+      // onPress={() => onTap?.(product)} // 🔥 call onTap when the card is pressed
+      onPress={() =>
+        router.push({
+          pathname: '/product/[slug]',
+          params: { slug: product.slug, id: product._id },
+        })
+      }
       style={{
         flex: 1,
         backgroundColor: '#fff',

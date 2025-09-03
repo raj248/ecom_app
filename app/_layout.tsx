@@ -49,6 +49,14 @@ export default function RootLayout() {
                   <Stack screenOptions={SCREEN_OPTIONS}>
                     <Stack.Screen name="(tabs)" options={TABS_OPTIONS} />
                     <Stack.Screen name="product/[slug]" options={{ animation: 'simple_push' }} />
+                    <Stack.Screen
+                      name="search"
+                      options={{
+                        animation: 'none',
+                        headerShown: false,
+                        presentation: 'modal',
+                      }}
+                    />
                     <Stack.Screen name="modal" options={MODAL_OPTIONS} />
                   </Stack>
                   <Toast avoidKeyboard topOffset={80} />

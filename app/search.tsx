@@ -19,8 +19,12 @@ import { Product } from '~/models/Product';
 import { Attribute } from '~/models/Attribute';
 
 import Noresult from '~/assets/no-result.svg';
+import CustomHeader from '~/components/CustomHeader';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useLocalSearchParams } from 'expo-router';
 const SearchScreen = () => {
   const navigation = useNavigation();
+  const { initialQuery } = useLocalSearchParams();
 
   const [query, setQuery] = useState('');
   const [products, setProducts] = useState<Product[]>([]);
@@ -66,23 +70,15 @@ const SearchScreen = () => {
   }, [products, sortOrder]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff' }}>
+    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: '#fff' }}>
       {/* Search Bar */}
-      <View style={{ padding: 10, borderBottomWidth: 1, borderColor: '#eee' }}>
-        <TextInput
-          placeholder="Search products..."
-          value={query}
-          onChangeText={setQuery}
-          autoFocus
-          style={{
-            backgroundColor: '#f3f4f6',
-            paddingHorizontal: 12,
-            paddingVertical: 10,
-            borderRadius: 8,
-            fontSize: 16,
-          }}
-        />
-      </View>
+      <CustomHeader
+        placeholder="Search for products (e.g. fish, apple, oil)"
+        showBackButton={true}
+        initialQuery={initialQuery as string}
+        onBackPress={() => navigation.goBack()}
+        onSearch={(text) => setQuery(text)}
+      />
 
       {/* Categories */}
       {/* <CategoryCarousel /> */}
@@ -154,7 +150,7 @@ const SearchScreen = () => {
           />
         </>
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 

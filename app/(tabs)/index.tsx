@@ -14,6 +14,7 @@ import DiscountedProductsSection from '~/components/DiscountedProductsSection';
 import LatestDiscountedProducts from '~/components/LatestDiscountedProduct';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomHeader from '~/components/CustomHeader';
+import { router } from 'expo-router';
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -29,7 +30,12 @@ export default function Home() {
 
   return (
     <SafeAreaView edges={['top']} className="flex-1">
-      <CustomHeader />
+      <CustomHeader
+        placeholder="Search for products (e.g. fish, apple, oil)"
+        showBackButton={false}
+        clearQuery={true}
+        onSearch={(e) => router.push({ pathname: '/search', params: { initialQuery: e } })}
+      />
       <ScrollView className="flex-1 bg-white">
         {/* Drop-in carousel */}
         <Carousel slider={storeCustomizationSetting?.slider} />
