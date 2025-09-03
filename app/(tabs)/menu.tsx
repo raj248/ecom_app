@@ -1,5 +1,7 @@
+import { router } from 'expo-router';
 import { View, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Button } from '~/components/Button';
 import FeatureCategory from '~/components/FeatureCategory';
 import PageList from '~/components/PageList';
 
@@ -19,6 +21,7 @@ export default function MenuPage() {
         <View style={{ flex: 1 }}>
           <PageList onPress={(page) => console.log('Clicked page:', page.name)} />
         </View>
+        <Button title="Go to Search" onPress={() => router.push('/search')} />
       </ScrollView>
     </SafeAreaView>
   );

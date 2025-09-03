@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { GestureResponderEvent } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button } from '~/components/Button';
@@ -18,6 +19,7 @@ export default function Modal() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Button title="GetShowProducts" onPress={handlePress} />
+      <Button title="Push to Search" onPress={() => router.push('/search')} />
     </SafeAreaView>
   );
 }
