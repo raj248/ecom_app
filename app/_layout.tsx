@@ -77,6 +77,10 @@ export default function RootLayout() {
                       name="offer-page"
                       options={{ animation: 'simple_push', title: 'Offer Page' }}
                     />
+                    <Stack.Screen
+                      name="checkout"
+                      options={{ animation: 'simple_push', title: 'Proceed to Pay' }}
+                    />
                     <Stack.Screen name="modal" options={MODAL_OPTIONS} />
                   </Stack>
                   <Toast avoidKeyboard topOffset={80} />

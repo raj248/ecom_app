@@ -2,11 +2,13 @@ import { Link, Stack } from 'expo-router';
 
 import { Text, View } from 'react-native';
 
+import NotFound from '~/assets/404.svg';
 export default function NotFoundScreen() {
   return (
     <>
       <Stack.Screen options={{ title: 'Oops!' }} />
       <View className={styles.container}>
+        <NotFound width={300} height={300} />
         <Text className={styles.title}>{"This screen doesn't exist."}</Text>
         <Link href="/" className={styles.link}>
           <Text className={styles.linkText}>Go to home screen!</Text>

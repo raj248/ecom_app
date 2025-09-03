@@ -29,7 +29,7 @@ export default function PageList({ pages, onPress }: PageListProps) {
       id: '2',
       name: 'Checkout Page',
       onClick: () => {
-        router.push('/offer-page');
+        router.push('/checkout');
       },
       icon: 'credit-card',
     },
@@ -37,7 +37,7 @@ export default function PageList({ pages, onPress }: PageListProps) {
       id: '3',
       name: 'FAQ Page',
       onClick: () => {
-        router.push('/offer-page');
+        router.push('/+not-found');
       },
       icon: 'help-circle',
     },
@@ -45,7 +45,7 @@ export default function PageList({ pages, onPress }: PageListProps) {
       id: '4',
       name: 'About Us Page',
       onClick: () => {
-        router.push('/offer-page');
+        router.push('/+not-found');
       },
       icon: 'info',
     },
@@ -53,7 +53,7 @@ export default function PageList({ pages, onPress }: PageListProps) {
       id: '5',
       name: 'Contact Us Page',
       onClick: () => {
-        router.push('/offer-page');
+        router.push('/+not-found');
       },
       icon: 'mail',
     },
@@ -61,7 +61,7 @@ export default function PageList({ pages, onPress }: PageListProps) {
       id: '6',
       name: 'Privacy Policy Page',
       onClick: () => {
-        router.push('/offer-page');
+        router.push('/+not-found');
       },
       icon: 'lock',
     },
@@ -69,7 +69,7 @@ export default function PageList({ pages, onPress }: PageListProps) {
       id: '7',
       name: 'Terms and Conditions Page',
       onClick: () => {
-        router.push('/offer-page');
+        router.push('/+not-found');
       },
       icon: 'file-text',
     },
@@ -77,7 +77,7 @@ export default function PageList({ pages, onPress }: PageListProps) {
       id: '8',
       name: 'Not Found Page',
       onClick: () => {
-        router.push('/offer-page');
+        router.push('/+not-found');
       },
       icon: 'alert-triangle',
     },
