@@ -24,7 +24,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
 const SearchScreen = () => {
   const navigation = useNavigation();
-  const { initialQuery } = useLocalSearchParams();
+  const { initialQuery, Category, _id } = useLocalSearchParams();
 
   const [query, setQuery] = useState('');
   const [products, setProducts] = useState<Product[]>([]);
@@ -33,28 +33,36 @@ const SearchScreen = () => {
   const [sortOrder, setSortOrder] = useState('All');
   const [isLoading, setIsLoading] = useState(false);
 
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const [resProducts, resAttributes] = await Promise.all([
+        ProductServices.getShowingStoreProducts({
+          title: query,
+          category: (_id as string) || '',
+        }),
+        AttributeServices.getShowingAttributes(),
+      ]);
+      setProducts(resProducts?.products || []);
+      setAttributes(resAttributes);
+    } catch (err) {
+      Toast.show({ type: 'error', text1: 'Failed to load products' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (_id) {
+      fetchData();
+    }
+  }, [_id, Category]);
+
   useEffect(() => {
     if (query.trim() === '') {
       setProducts([]);
       return;
     }
-
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const [resProducts, resAttributes] = await Promise.all([
-          ProductServices.getShowingStoreProducts({ title: query }),
-          AttributeServices.getShowingAttributes(),
-        ]);
-        setProducts(resProducts?.products || []);
-        setAttributes(resAttributes);
-      } catch (err) {
-        Toast.show({ type: 'error', text1: 'Failed to load products' });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchData();
   }, [query]);
 
@@ -70,7 +78,7 @@ const SearchScreen = () => {
   }, [products, sortOrder]);
 
   return (
-    <SafeAreaView edges={['top']} style={{ flex: 1, backgroundColor: '#fff' }}>
+    <SafeAreaView edges={['top', 'bottom']} style={{ flex: 1, backgroundColor: '#fff' }}>
       {/* Search Bar */}
       <CustomHeader
         placeholder="Search for products (e.g. fish, apple, oil)"
@@ -87,7 +95,7 @@ const SearchScreen = () => {
       {isLoading && <ActivityIndicator size="large" color="#10b981" style={{ marginTop: 20 }} />}
 
       {/* No results */}
-      {!isLoading && query.length > 0 && products.length === 0 && (
+      {!isLoading && (query.length > 0 || _id) && products.length === 0 && (
         <View style={{ alignItems: 'center', marginTop: 50 }}>
           <Image
             source={require('../assets/no-result.svg')}

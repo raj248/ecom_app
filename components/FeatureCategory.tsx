@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 import CategoryServices from '~/services/CategoryServices';
 import { Category } from '~/models/Category';
+import { router } from 'expo-router';
 
 export default function FeatureCategory() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -24,7 +25,8 @@ export default function FeatureCategory() {
   const handleCategoryClick = (id: string, categoryName: string) => {
     const categorySlug = categoryName.toLowerCase().replace(/[^a-z0-9]+/gi, '-');
     const url = `/search?category=${categorySlug}&_id=${id}`;
-    console.log('Navigate to:', url);
+    // console.log('Navigate to:', url);
+    router.push(`/search?category=${categorySlug}&_id=${id}`);
 
     // If you’re using React Navigation
     // navigation.navigate('SearchScreen', { category: categorySlug, id });

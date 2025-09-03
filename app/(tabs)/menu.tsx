@@ -21,7 +21,6 @@ export default function MenuPage() {
         <View style={{ flex: 1 }}>
           <PageList onPress={(page) => console.log('Clicked page:', page.name)} />
         </View>
-        <Button title="Go to Search" onPress={() => router.push('/search')} />
       </ScrollView>
     </SafeAreaView>
   );
