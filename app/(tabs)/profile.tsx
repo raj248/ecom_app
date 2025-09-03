@@ -91,19 +91,19 @@ const ProfilePage = () => {
     {
       title: 'My Account',
       icon: Feather,
-      onclick: () => router.push('/my-order'),
+      onclick: () => router.push('/my-account'),
       iconName: 'user',
     },
     {
       title: 'Update Profile',
       icon: Feather,
-      onclick: () => router.push('/my-order'),
+      onclick: () => router.push('/update-profile'),
       iconName: 'settings',
     },
     {
       title: 'Change Password',
       icon: Feather,
-      onclick: () => router.push('/my-order'),
+      onclick: () => router.push('/change-password'),
       iconName: 'file-text',
     },
   ];

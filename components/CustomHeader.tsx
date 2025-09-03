@@ -109,39 +109,6 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
           </TouchableOpacity>
         </View>
       </View>
-
-      {/* Dropdown suggestions */}
-      {showDropdown && suggestions.length > 0 && (
-        <View
-          style={{
-            backgroundColor: 'white',
-            maxHeight: 200,
-            borderBottomLeftRadius: 8,
-            borderBottomRightRadius: 8,
-            marginHorizontal: 10,
-            shadowColor: '#000',
-            shadowOpacity: 0.1,
-            shadowRadius: 4,
-            elevation: 3,
-          }}>
-          <FlatList
-            data={suggestions}
-            keyExtractor={(item) => item._id}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                onPress={() => {
-                  setQuery(item.title?.en || '');
-                  setShowDropdown(false);
-                  onSearch?.(item.title?.en || '');
-                }}
-                style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: '#eee' }}>
-                <Text>{item.title?.en}</Text>
-              </TouchableOpacity>
-            )}
-            keyboardShouldPersistTaps="handled"
-          />
-        </View>
-      )}
     </View>
   );
 };

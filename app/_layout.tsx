@@ -61,6 +61,18 @@ export default function RootLayout() {
                       name="my-order"
                       options={{ animation: 'simple_push', title: 'My Orders' }}
                     />
+                    <Stack.Screen
+                      name="my-account"
+                      options={{ animation: 'simple_push', title: 'My Account' }}
+                    />
+                    <Stack.Screen
+                      name="update-profile"
+                      options={{ animation: 'simple_push', title: 'Edit Profile' }}
+                    />
+                    <Stack.Screen
+                      name="change-password"
+                      options={{ animation: 'simple_push', title: 'Change Password' }}
+                    />
                     <Stack.Screen name="modal" options={MODAL_OPTIONS} />
                   </Stack>
                   <Toast avoidKeyboard topOffset={80} />
