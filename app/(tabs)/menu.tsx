@@ -19,7 +19,7 @@ export default function MenuPage() {
           <FeatureCategory />
         </View>
         <View style={{ flex: 1 }}>
-          <PageList onPress={(page) => console.log('Clicked page:', page.name)} />
+          <PageList onPress={(page) => page.onClick()} />
         </View>
       </ScrollView>
     </SafeAreaView>

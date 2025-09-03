@@ -73,6 +73,10 @@ export default function RootLayout() {
                       name="change-password"
                       options={{ animation: 'simple_push', title: 'Change Password' }}
                     />
+                    <Stack.Screen
+                      name="offer-page"
+                      options={{ animation: 'simple_push', title: 'Offer Page' }}
+                    />
                     <Stack.Screen name="modal" options={MODAL_OPTIONS} />
                   </Stack>
                   <Toast avoidKeyboard topOffset={80} />

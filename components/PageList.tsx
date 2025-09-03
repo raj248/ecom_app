@@ -1,9 +1,11 @@
 import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
 type Page = {
   id: string;
   name: string;
+  onClick: () => void;
   icon: string;
 };
 
@@ -15,14 +17,70 @@ type PageListProps = {
 export default function PageList({ pages, onPress }: PageListProps) {
   // Updated pages list
   const defaultPages: Page[] = [
-    { id: '1', name: 'Offer Page', icon: 'tag' },
-    { id: '2', name: 'Checkout Page', icon: 'credit-card' },
-    { id: '3', name: 'FAQ Page', icon: 'help-circle' },
-    { id: '4', name: 'About Us Page', icon: 'info' },
-    { id: '5', name: 'Contact Us Page', icon: 'mail' },
-    { id: '6', name: 'Privacy Policy Page', icon: 'lock' },
-    { id: '7', name: 'Terms and Conditions Page', icon: 'file-text' },
-    { id: '8', name: 'Not Found Page', icon: 'alert-triangle' },
+    {
+      id: '1',
+      name: 'Offer Page',
+      onClick: () => {
+        router.push('/offer-page');
+      },
+      icon: 'tag',
+    },
+    {
+      id: '2',
+      name: 'Checkout Page',
+      onClick: () => {
+        router.push('/offer-page');
+      },
+      icon: 'credit-card',
+    },
+    {
+      id: '3',
+      name: 'FAQ Page',
+      onClick: () => {
+        router.push('/offer-page');
+      },
+      icon: 'help-circle',
+    },
+    {
+      id: '4',
+      name: 'About Us Page',
+      onClick: () => {
+        router.push('/offer-page');
+      },
+      icon: 'info',
+    },
+    {
+      id: '5',
+      name: 'Contact Us Page',
+      onClick: () => {
+        router.push('/offer-page');
+      },
+      icon: 'mail',
+    },
+    {
+      id: '6',
+      name: 'Privacy Policy Page',
+      onClick: () => {
+        router.push('/offer-page');
+      },
+      icon: 'lock',
+    },
+    {
+      id: '7',
+      name: 'Terms and Conditions Page',
+      onClick: () => {
+        router.push('/offer-page');
+      },
+      icon: 'file-text',
+    },
+    {
+      id: '8',
+      name: 'Not Found Page',
+      onClick: () => {
+        router.push('/offer-page');
+      },
+      icon: 'alert-triangle',
+    },
   ];
 
   const renderItem = ({ item }: { item: Page }) => (
