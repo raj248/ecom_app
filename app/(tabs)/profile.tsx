@@ -16,6 +16,9 @@ import useGetSetting from '~/hooks/useGetSetting';
 import LoginPage from '../login';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSession } from '~/contexts/SessionContext';
+import { GetOrderCustomerResponse, Order } from '~/models/Order';
+import { FlatList } from 'react-native';
+
 // const FeatheredIconName = keyof typeof Feather['name'];
 
 type CardProps = {
@@ -39,7 +42,7 @@ const ProfilePage = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const { storeCustomizationSetting } = useGetSetting();
-  const [orderData, setOrderData] = useState<any>(null);
+  const [orderData, setOrderData] = useState<GetOrderCustomerResponse | null>(null);
 
   useEffect(() => {
     if (!session) {
@@ -139,19 +142,73 @@ const ProfilePage = () => {
           </View>
 
           {/* Recent Orders */}
-          <View style={styles.recentOrders}>
-            <Text style={styles.sectionTitle}>Recent Orders</Text>
+
+          <View className="mt-5">
+            <Text className="mb-3 text-lg font-semibold text-gray-900">Recent Orders</Text>
+
             {loading ? (
               <ActivityIndicator size="large" color="#10b981" />
-            ) : orderData?.docs?.length ? (
-              orderData.docs.map((order: any) => (
-                <View key={order._id} style={styles.orderItem}>
-                  <Text>Order #{order._id}</Text>
-                  <Text>Status: {order.status}</Text>
-                </View>
-              ))
+            ) : orderData?.orders?.length ? (
+              <FlatList
+                data={orderData.orders.slice(0, 4)} // only top 4 orders
+                scrollEnabled={false}
+                keyExtractor={(order) => order._id}
+                renderItem={({ item: order }) => (
+                  <View className="mb-3 rounded-xl bg-white p-4 shadow-sm">
+                    {/* Header */}
+                    <View className="flex-row items-center justify-between">
+                      <Text className="text-base font-medium text-gray-700">
+                        Order #{order.invoice || order._id}
+                      </Text>
+                      <Text
+                        className={`text-sm font-semibold ${
+                          order.status === 'pending'
+                            ? 'text-amber-500'
+                            : order.status === 'processing'
+                              ? 'text-blue-500'
+                              : order.status === 'delivered'
+                                ? 'text-green-600'
+                                : 'text-red-500'
+                        }`}>
+                        {order.status.toUpperCase()}
+                      </Text>
+                    </View>
+
+                    {/* Date */}
+                    <Text className="mt-1 text-xs text-gray-500">
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </Text>
+
+                    {/* Cart preview */}
+                    {order.cart?.length > 0 && (
+                      <View className="mt-2">
+                        {order.cart.slice(0, 2).map((item, idx) => (
+                          <Text key={idx} className="text-sm text-gray-700">
+                            •{' '}
+                            {typeof item.title === 'string'
+                              ? item.title
+                              : item.title?.en || 'Product'}{' '}
+                            x {item.quantity || 1}
+                          </Text>
+                        ))}
+                        {order.cart.length > 2 && (
+                          <Text className="mt-1 text-xs text-gray-500">
+                            + {order.cart.length - 2} more items
+                          </Text>
+                        )}
+                      </View>
+                    )}
+
+                    {/* Total */}
+                    <Text className="mt-3 text-base font-semibold text-gray-900">
+                      Total: ${order.total.toFixed(2)}
+                    </Text>
+                  </View>
+                )}
+                ListEmptyComponent={<Text className="text-gray-600">No recent orders</Text>}
+              />
             ) : (
-              <Text>No recent orders</Text>
+              <Text className="text-gray-600">No recent orders</Text>
             )}
           </View>
         </ScrollView>

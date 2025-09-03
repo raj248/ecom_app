@@ -13,18 +13,18 @@ export interface Product {
   sku?: string;
   barcode?: string;
 
-  title: Record<string, any>; // since it's `type: Object` in Mongoose
+  title: string | Record<string, any>; // sometimes plain string, sometimes object with `en`
   description?: Record<string, any>;
 
   slug: string;
-  categories: Category[];
-  category: Category;
+  categories?: string[]; // in your sample: array of IDs
+  category?: Category; // populated version
 
-  image?: string[];
+  image?: string | string[]; // can be single or array
   stock?: number;
   sales?: number;
 
-  tag?: string[];
+  tag?: string[]; // comes as serialized JSON sometimes
   prices: Prices;
 
   variants?: Variant[];
@@ -38,7 +38,6 @@ export interface Product {
   createdAt?: string;
   updatedAt?: string;
 }
-
 export interface Review {
   _id: string;
   user: {

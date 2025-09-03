@@ -1,4 +1,5 @@
 // OrderServices.ts
+import { GetOrderCustomerResponse } from '~/models/Order';
 import requests from './httpServices';
 
 const OrderServices = {
@@ -21,7 +22,7 @@ const OrderServices = {
   getOrderCustomer: async ({
     page = 1,
     limit = 8,
-  }: { page?: number; limit?: number } = {}): Promise<any> => {
+  }: { page?: number; limit?: number } = {}): Promise<GetOrderCustomerResponse> => {
     return requests.get(`/order?limit=${limit}&page=${page}`);
   },
 
