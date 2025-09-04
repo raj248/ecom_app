@@ -95,7 +95,7 @@ export default function MyOrders() {
   );
 
   return (
-    // <SafeAreaView className="flex-1 bg-gray-100">
+    // <SafeAreaView className="flex-1">
     <ScrollView className="p-4">
       {loading && page === 1 ? (
         <ActivityIndicator size="large" color="#10b981" />

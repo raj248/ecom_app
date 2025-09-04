@@ -175,7 +175,7 @@ export default function Checkout() {
   ];
 
   return (
-    <SafeAreaView edges={['right', 'left', 'bottom']} className="flex-1 bg-gray-100">
+    <SafeAreaView edges={['right', 'left', 'bottom']} className="flex-1">
       <ScrollView className="flex-1 p-4">
         <Text className="mb-4 text-xl font-bold">Checkout</Text>
 

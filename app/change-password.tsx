@@ -43,7 +43,7 @@ export default function ChangePassword() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-100">
+    <SafeAreaView className="flex-1">
       <View className="flex-1 p-5">
         <Text className="mb-6 text-2xl font-bold text-gray-900">Change Password</Text>
 
@@ -54,7 +54,7 @@ export default function ChangePassword() {
           name="email"
           render={({ field: { value } }) => (
             <TextInput
-              className="mb-4 rounded-lg border border-gray-300 bg-gray-100 p-3 text-gray-500"
+              className="mb-4 rounded-lg border border-gray-300 p-3 text-gray-500"
               value={value}
               editable={false}
             />

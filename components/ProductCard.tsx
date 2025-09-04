@@ -1,7 +1,9 @@
+import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Product } from '~/models/Product';
+import { useCartStore } from '~/store/useCartStore';
 
 interface ProductCardProps {
   product: Product;
@@ -11,6 +13,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onPress, onTap }) => {
   const { title, prices, stock, image } = product;
+  const { addToCart } = useCartStore.getState();
   const rupee = '₹';
 
   const discount =
@@ -80,29 +83,24 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress, onTap }) =>
           marginBottom: 4,
         }}
         numberOfLines={2}>
-        {title?.en || 'Unnamed Product'}
+        {typeof title === 'string' ? title : title?.en}
+        {/* {title?.en || 'Unnamed Product'} */}
       </Text>
 
       {/* Price & Add button */}
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Text style={{ fontSize: 14, fontWeight: '600', color: '#000' }}>
+      <View className="flex-row items-center justify-between">
+        <Text className="text-sm font-semibold text-black">
           {rupee}
           {prices?.price?.toFixed(2) ?? '0.00'}
         </Text>
         <TouchableOpacity
           onPress={(e) => {
             e.stopPropagation(); // ✅ prevent triggering onTap when pressing Add
-            onPress?.(product);
+            // onPress?.(product);
+            addToCart(product); // ✅ add to cart
           }}
-          style={{
-            backgroundColor: '#22c55e',
-            width: 32,
-            height: 32,
-            borderRadius: 6,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Text style={{ fontSize: 20, color: 'white' }}>＋</Text>
+          className="h-8 w-8 items-center justify-center rounded-md bg-emerald-500">
+          <Feather name="shopping-bag" size={18} color="white" />
         </TouchableOpacity>
       </View>
     </TouchableOpacity>

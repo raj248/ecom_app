@@ -8,7 +8,7 @@ export default function MyAccount() {
   const { session, logout } = useSession();
 
   return (
-    <View className="flex-1 bg-gray-100">
+    <View className="flex-1">
       <View className="p-4">
         {/* Header */}
         <Text className="mb-4 text-2xl font-bold text-gray-900">My Account</Text>

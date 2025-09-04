@@ -38,7 +38,7 @@ export default function EditProfile({ navigation }: any) {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-100">
+    <SafeAreaView className="flex-1">
       <View className="flex-1 p-5">
         <Text className="mb-6 text-2xl font-bold text-gray-900">Edit Profile</Text>
 
@@ -95,7 +95,7 @@ export default function EditProfile({ navigation }: any) {
           name="email"
           render={({ field: { value } }) => (
             <TextInput
-              className="mb-6 rounded-lg border border-gray-200 bg-gray-100 p-3 text-gray-500"
+              className="mb-6 rounded-lg border border-gray-200 p-3 text-gray-500"
               editable={false}
               value={value}
             />

@@ -44,7 +44,7 @@ export interface Order {
 // CartItem (extends Product with order-specific fields)
 // =============================
 export interface CartItem extends Product {
-  price: number; // selected price
+  price: number; // discounted price
   originalPrice: number;
   quantity: number;
   itemTotal: number; // quantity * price
