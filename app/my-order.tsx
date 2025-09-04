@@ -23,6 +23,7 @@ export default function MyOrders() {
       const res = await OrderServices.getOrderCustomer({ page: pageNum, limit: 10 });
       if (pageNum === 1) {
         setOrders(res.orders);
+        console.log(`Test order with id ${res.orders[0]._id}`, res.orders[0]);
       } else {
         setOrders((prev) => [...prev, ...res.orders]);
       }
@@ -75,15 +76,15 @@ export default function MyOrders() {
       {/* Cart preview */}
       {order.cart?.length > 0 && (
         <View className="mt-2">
-          {order.cart.slice(0, 2).map((item, idx) => (
+          {order.cart.map((item, idx) => (
             <Text key={idx} className="text-sm text-gray-700">
               • {typeof item.title === 'string' ? item.title : item.title?.en || 'Product'} x{' '}
               {item.quantity || 1}
             </Text>
           ))}
-          {order.cart.length > 2 && (
+          {/* {order.cart.length > 2 && (
             <Text className="mt-1 text-xs text-gray-500">+ {order.cart.length - 2} more items</Text>
-          )}
+          )} */}
         </View>
       )}
 

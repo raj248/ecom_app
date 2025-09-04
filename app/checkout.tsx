@@ -100,19 +100,24 @@ export default function Checkout() {
   const selectedShippingOption = watch('shippingOption');
   const selectedPaymentMethod = watch('paymentMethod');
 
+  // helper to normalize title
+  const normalizeTitle = (title: string | Record<string, any>) => {
+    if (!title) return '';
+    if (typeof title === 'string') return title;
+    return title.en || Object.values(title)[0] || '';
+  };
+
   const onSubmit = async (data: CheckoutFormData) => {
     try {
+      const normalizedCart = cartItems.map((item) => ({
+        ...item,
+        title: normalizeTitle(item.title),
+      }));
+
       // Construct order data
       const orderData = {
         user: session?._id, // Assuming user ID is available in session
-        cart: cartItems.map((item) => ({
-          product: item._id, // Assuming product ID is item._id
-          price: item.price,
-          originalPrice: item.originalPrice,
-          quantity: item.quantity,
-          itemTotal: item.itemTotal,
-          variant: item.variant,
-        })),
+        cart: normalizedCart,
         user_info: {
           name: data.name,
           email: data.email,
