@@ -12,6 +12,7 @@ import { Product, Variant } from '~/models/Product';
 import { Attribute } from '~/models/Attribute';
 import QuantitySelector from '~/components/QuantitySelector';
 import RelatedProducts from '~/components/RelatedProduct';
+import { useCartStore } from '~/store/useCartStore';
 
 const ProductScreen = () => {
   const { slug, id } = useLocalSearchParams<{ slug: string; id: string }>();
@@ -29,9 +30,13 @@ const ProductScreen = () => {
   const [variants, setVariants] = useState<Variant[]>([]);
   const [selectedAttrs, setSelectedAttrs] = useState<Record<string, string>>({});
 
+  const cartQuantity = useCartStore(
+    (state) => state.cart.find((item) => item._id === product?._id)?.quantity ?? 0
+  );
+
+  // const [amount, setAmount] = useState(cartQuantity);
   const [amount, setAmount] = useState(1);
 
-  // ✅ fetch product details
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -43,7 +48,6 @@ const ProductScreen = () => {
         setProduct(resProduct);
         setAttributes(resAttributes);
         setRelatedProducts(resRelated);
-        // console.log('Product: ', resProduct);
       } catch (err) {
         Toast.show({ type: 'error', text1: 'Failed to load product' });
       }
@@ -61,7 +65,6 @@ const ProductScreen = () => {
       const firstVariant = product.variants![0];
       setVariants(product.variants || []);
 
-      // ✅ set default attributes from first variant
       const defaultAttrs: Record<string, string> = {};
       Object.entries(firstVariant).forEach(([key, value]) => {
         if (
@@ -81,7 +84,6 @@ const ProductScreen = () => {
       });
       setSelectedAttrs(defaultAttrs);
 
-      // ✅ update product state
       setSelectVariant(firstVariant);
       setImg(firstVariant?.image || null);
       setStock(firstVariant?.quantity || 0);
@@ -95,7 +97,6 @@ const ProductScreen = () => {
       setPrice(price);
       setOriginalPrice(originalPrice);
     } else {
-      // fallback to single product case
       setVariants([]);
       setStock(product?.stock || 0);
       setImg(product?.image?.[0] || null);
@@ -127,23 +128,27 @@ const ProductScreen = () => {
     }
   }, [selectedAttrs, variants]);
 
-  // ✅ add to cart (dummy)
+  const addToCart = useCartStore((state) => state.addToCart);
+
   const handleAddToCart = () => {
     if (!product) return;
     if (stock <= 0) return Toast.show({ type: 'error', text1: 'Insufficient stock' });
-    console.log('Categories: ', product.category);
+
+    for (let i = 0; i < amount; i++) {
+      addToCart(product);
+    }
+
     Toast.show({
       type: 'success',
       text1: 'Added to cart',
-      text2: `${amount} ${product.title?.en || 'Product'} - for ${price * amount}`,
+      text2: `${amount} ${typeof product.title === 'string' ? product.title : product.title?.en || 'Product'} - for ${price * amount}`,
     });
   };
 
-  // ✅ share product
   const handleShare = async () => {
     try {
       await Share.open({
-        message: `Check out this product: ${product?.title?.en || ''}`,
+        message: `Check out this product: ${typeof product?.title === 'string' ? product.title : product?.title?.en || ''}`,
         url: `https://demo.zenextech.in/product/${product?.slug}`,
       });
     } catch (err) {
@@ -187,13 +192,13 @@ const ProductScreen = () => {
   }
 
   // helpers: build maps for quick lookup
-  // 🔎 resolve attribute ID → name (localized)
+  // resolve attribute ID → name (localized)
   const getAttributeName = (attrId: string) => {
     const attr = attributes.find((a) => a._id === attrId);
     return attr?.name?.en || attr?.title?.en || attrId;
   };
 
-  // 🔎 resolve variant option ID → name
+  // resolve variant option ID → name
   const getVariantName = (attrId: string, variantId: string) => {
     const attr = attributes.find((a) => a._id === attrId);
     const variant = attr?.variants.find((v) => v._id === variantId);
@@ -202,10 +207,17 @@ const ProductScreen = () => {
 
   return (
     <ScrollView>
-      <Stack.Screen options={{ title: product.title?.en || 'Untitled' }} />
+      <Stack.Screen
+        options={{
+          title:
+            typeof product.title === 'string' ? product.title : product.title?.en || 'Untitled',
+        }}
+      />
       {img && <Image source={{ uri: img }} style={{ width: '100%', height: 300 }} />}
       <View style={{ padding: 16 }}>
-        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{product.title?.en || 'Untitled'}</Text>
+        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>
+          {typeof product.title === 'string' ? product.title : product.title?.en || 'Untitled'}
+        </Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 4 }}>
           <View
             style={{
@@ -286,25 +298,32 @@ const ProductScreen = () => {
           {product.description?.en || 'No description'}
         </Text>
 
-        <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-          {/* <View style={{ flexDirection: 'row', alignItems: 'center' }}> */}
+        <View
+          style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          {/* Quantity Selector */}
           <QuantitySelector amount={amount} setAmount={setAmount} />
 
-          <TouchableOpacity
-            onPress={handleAddToCart}
-            style={{
-              backgroundColor: '#000',
-              padding: 7,
-              paddingVertical: 8,
-              borderRadius: 8,
-              marginVertical: 8,
-              width: '55%',
-              alignItems: 'center',
-            }}>
-            <Text style={{ color: '#fff', textAlign: 'center', fontSize: 16, fontWeight: '600' }}>
-              Add to Cart
-            </Text>
-          </TouchableOpacity>
+          {/* Right side: button + "in cart" info */}
+          <View style={{ alignItems: 'center' }}>
+            <TouchableOpacity
+              onPress={handleAddToCart}
+              style={{
+                backgroundColor: '#000',
+                paddingVertical: 10,
+                paddingHorizontal: 20,
+                borderRadius: 8,
+                width: 150,
+                alignItems: 'center',
+              }}>
+              <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600' }}>Add to Cart</Text>
+            </TouchableOpacity>
+
+            {cartQuantity > 0 && (
+              <Text style={{ marginTop: 6, fontSize: 14, color: 'gray' }}>
+                In Cart: {cartQuantity}
+              </Text>
+            )}
+          </View>
         </View>
 
         {/* Category & Tags Section */}

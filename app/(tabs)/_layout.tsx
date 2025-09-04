@@ -33,7 +33,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="cart"
         options={{
-          title: 'Cart',
+          title: 'My Cart',
+          // headerTitleStyle: { fontWeight: 'bold' },
           tabBarIcon: ({ color, size }) => (
             <View>
               <Feather name="shopping-cart" size={size} color={color} />
