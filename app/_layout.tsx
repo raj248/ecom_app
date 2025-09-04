@@ -79,7 +79,7 @@ export default function RootLayout() {
                     />
                     <Stack.Screen
                       name="checkout"
-                      options={{ animation: 'simple_push', title: 'Proceed to Pay' }}
+                      options={{ animation: 'simple_push', title: 'Checkout' }}
                     />
                     <Stack.Screen name="modal" options={MODAL_OPTIONS} />
                   </Stack>

@@ -78,6 +78,20 @@ export interface SeoSetting {
   meta_url: string;
 }
 
+// models/Checkout.ts
+
+export interface Checkout {
+  shipping_name_one: LocalizedString;
+  shipping_one_cost: number;
+  shipping_one_desc: LocalizedString;
+
+  shipping_name_two: LocalizedString;
+  shipping_two_cost: number;
+  shipping_two_desc: LocalizedString;
+  // miscellaneous type
+  // key: Record<string, any>;
+}
+
 export interface StoreCustomizationSetting {
   navbar: NavbarSetting;
   home: Record<string, any>; // you can expand similar to Navbar/Slider if you need strong typing
@@ -88,7 +102,7 @@ export interface StoreCustomizationSetting {
   term_and_condition: Record<string, any>;
   faq: Record<string, any>;
   slider: SliderSetting;
-  checkout: Record<string, any>;
+  checkout: Checkout;
   dashboard: Record<string, any>;
   footer: Record<string, any>;
   slug: Record<string, any>;

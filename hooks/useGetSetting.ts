@@ -20,6 +20,12 @@ const useGetSetting = () => {
     gcTime: 15 * 60 * 1000,
   });
 
+  const { data: storeSetting } = useQuery({
+    queryKey: ['storeSetting'],
+    queryFn: async () => await SettingServices.getStoreSetting(),
+    staleTime: 4 * 60 * 1000, // Api request after 4 minutes
+  });
+
   // Fetch store customization setting
   const {
     data,
@@ -66,6 +72,7 @@ const useGetSetting = () => {
     error,
     loading,
     globalSetting,
+    storeSetting,
     storeCustomizationSetting,
   };
 };

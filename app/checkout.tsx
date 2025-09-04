@@ -17,6 +17,8 @@ import OrderServices from '~/services/OrderServices';
 import { router } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import { Feather, Ionicons } from '@expo/vector-icons';
+import { useCartStore } from '~/store/useCartStore';
+import useGetSetting from '~/hooks/useGetSetting';
 
 type CheckoutFormData = UserInfo & {
   shippingOption: 'standard' | 'express';
@@ -26,37 +28,41 @@ type CheckoutFormData = UserInfo & {
 
 export default function Checkout() {
   const { session } = useSession();
+  const { storeCustomizationSetting } = useGetSetting();
+
   const [shippingCost, setShippingCost] = useState(20); // Default standard shipping
   const [couponApplied, setCouponApplied] = useState(false);
   const [discountAmount, setDiscountAmount] = useState(0);
 
   // Dummy cart items for demonstration
-  const cartItems: CartItem[] = [
-    {
-      _id: '1',
-      title: { en: 'Organic Apples' },
-      price: 2.5,
-      originalPrice: 3.0,
-      quantity: 2,
-      itemTotal: 5.0,
-      slug: 'organic-apples',
-      image: ['https://res.cloudinary.com/ahossain/image/upload/v1694089926/apple_g0g0g0.jpg'],
-      prices: { price: 2.5, originalPrice: 3.0 },
-      isCombination: false,
-    },
-    {
-      _id: '2',
-      title: { en: 'Fresh Salmon' },
-      price: 15.0,
-      originalPrice: 18.0,
-      quantity: 1,
-      itemTotal: 15.0,
-      slug: 'fresh-salmon',
-      image: ['https://res.cloudinary.com/ahossain/image/upload/v1694089926/salmon_g0g0g0.jpg'],
-      prices: { price: 15.0, originalPrice: 18.0 },
-      isCombination: false,
-    },
-  ];
+  // const cartItems: CartItem[] = [
+  //   {
+  //     _id: '1',
+  //     title: { en: 'Organic Apples' },
+  //     price: 2.5,
+  //     originalPrice: 3.0,
+  //     quantity: 2,
+  //     itemTotal: 5.0,
+  //     slug: 'organic-apples',
+  //     image: ['https://res.cloudinary.com/ahossain/image/upload/v1694089926/apple_g0g0g0.jpg'],
+  //     prices: { price: 2.5, originalPrice: 3.0 },
+  //     isCombination: false,
+  //   },
+  //   {
+  //     _id: '2',
+  //     title: { en: 'Fresh Salmon' },
+  //     price: 15.0,
+  //     originalPrice: 18.0,
+  //     quantity: 1,
+  //     itemTotal: 15.0,
+  //     slug: 'fresh-salmon',
+  //     image: ['https://res.cloudinary.com/ahossain/image/upload/v1694089926/salmon_g0g0g0.jpg'],
+  //     prices: { price: 15.0, originalPrice: 18.0 },
+  //     isCombination: false,
+  //   },
+  // ];
+
+  const cartItems = useCartStore((state) => state.cart);
 
   const subTotal = cartItems.reduce((sum, item) => sum + item.itemTotal, 0);
   const total = subTotal + shippingCost - discountAmount;
@@ -144,14 +150,14 @@ export default function Checkout() {
   const shippingOptions = [
     {
       key: 'standard',
-      label: 'Standard ($20)',
-      cost: 20,
+      label: storeCustomizationSetting?.checkout.shipping_name_one.en ?? 'Standard ($20)',
+      cost: storeCustomizationSetting?.checkout.shipping_one_cost ?? 20,
       icon: <Feather name="truck" size={20} color="#4b5563" />,
     },
     {
       key: 'express',
-      label: 'Express ($60)',
-      cost: 60,
+      label: storeCustomizationSetting?.checkout.shipping_name_two.en ?? 'Express ($60)',
+      cost: storeCustomizationSetting?.checkout.shipping_two_cost ?? 60,
       icon: <Ionicons name="rocket-outline" size={20} color="#4b5563" />,
     },
   ];
@@ -177,7 +183,7 @@ export default function Checkout() {
   return (
     <SafeAreaView edges={['right', 'left', 'bottom']} className="flex-1">
       <ScrollView className="flex-1 p-4">
-        <Text className="mb-4 text-xl font-bold">Checkout</Text>
+        {/* <Text className="mb-4 text-xl font-bold">Checkout</Text> */}
 
         {/* Personal Details */}
         <Text className="mb-2 text-lg font-semibold">01. Personal Details</Text>
