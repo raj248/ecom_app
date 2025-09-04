@@ -7,14 +7,22 @@ import { useCartStore } from '~/store/useCartStore';
 
 interface ProductCardProps {
   product: Product;
-  onPress?: (product: Product) => void; // for add-to-cart button
   onTap?: (product: Product) => void; // for card tap → navigate to detail
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onPress, onTap }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, onTap }) => {
   const { title, prices, stock, image } = product;
-  const { addToCart } = useCartStore.getState();
+
+  // ✅ subscribe to cart
+  const cart = useCartStore((state) => state.cart);
+  const addToCart = useCartStore((state) => state.addToCart);
+  const removeFromCart = useCartStore((state) => state.removeFromCart);
+
   const rupee = '₹';
+
+  // Find product in cart
+  const cartItem = cart.find((item) => item._id === product._id);
+  const quantity = cartItem?.quantity ?? 0;
 
   const discount =
     prices?.originalPrice && prices.originalPrice > prices.price
@@ -24,7 +32,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress, onTap }) =>
   return (
     <TouchableOpacity
       activeOpacity={0.9}
-      // onPress={() => onTap?.(product)} // 🔥 call onTap when the card is pressed
       onPress={() =>
         router.push({
           pathname: '/product/[slug]',
@@ -63,7 +70,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress, onTap }) =>
         source={{
           uri:
             image && image.length > 0
-              ? image[0]
+              ? Array.isArray(image)
+                ? image[0]
+                : image
               : 'https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png',
         }}
         style={{
@@ -84,24 +93,49 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress, onTap }) =>
         }}
         numberOfLines={2}>
         {typeof title === 'string' ? title : title?.en}
-        {/* {title?.en || 'Unnamed Product'} */}
       </Text>
 
-      {/* Price & Add button */}
+      {/* Price & Cart Controls */}
       <View className="flex-row items-center justify-between">
         <Text className="text-sm font-semibold text-black">
           {rupee}
           {prices?.price?.toFixed(2) ?? '0.00'}
         </Text>
-        <TouchableOpacity
-          onPress={(e) => {
-            e.stopPropagation(); // ✅ prevent triggering onTap when pressing Add
-            // onPress?.(product);
-            addToCart(product); // ✅ add to cart
-          }}
-          className="h-8 w-8 items-center justify-center rounded-md bg-emerald-500">
-          <Feather name="shopping-bag" size={18} color="white" />
-        </TouchableOpacity>
+
+        {quantity > 0 ? (
+          // ✅ show quantity controls
+          <View className="flex-row items-center">
+            <TouchableOpacity
+              onPress={(e) => {
+                e.stopPropagation();
+                removeFromCart(product._id);
+              }}
+              className="h-8 w-8 items-center justify-center rounded-md bg-red-500">
+              <Feather name="minus" size={16} color="white" />
+            </TouchableOpacity>
+
+            <Text className="mx-2 font-semibold text-gray-800">{quantity}</Text>
+
+            <TouchableOpacity
+              onPress={(e) => {
+                e.stopPropagation();
+                addToCart(product);
+              }}
+              className="h-8 w-8 items-center justify-center rounded-md bg-emerald-500">
+              <Feather name="plus" size={16} color="white" />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          // ✅ show add button
+          <TouchableOpacity
+            onPress={(e) => {
+              e.stopPropagation();
+              addToCart(product);
+            }}
+            className="h-8 w-8 items-center justify-center rounded-md bg-emerald-500">
+            <Feather name="shopping-bag" size={18} color="white" />
+          </TouchableOpacity>
+        )}
       </View>
     </TouchableOpacity>
   );
