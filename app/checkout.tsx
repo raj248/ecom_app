@@ -63,6 +63,7 @@ export default function Checkout() {
   // ];
 
   const cartItems = useCartStore((state) => state.cart);
+  const { emptyCart } = useCartStore();
 
   const subTotal = cartItems.reduce((sum, item) => sum + item.itemTotal, 0);
   const total = subTotal + shippingCost - discountAmount;
@@ -141,6 +142,7 @@ export default function Checkout() {
         text1: 'Order Placed!',
         text2: `Your order #${res.invoice} has been placed successfully.`,
       });
+      emptyCart();
       router.replace('/my-order'); // Navigate to my orders page
     } catch (err: any) {
       console.error('Order placement error:', err);
