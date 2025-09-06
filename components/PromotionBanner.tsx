@@ -1,4 +1,5 @@
 // components/PromotionBanner.tsx
+import { RelativePathString, router } from 'expo-router';
 import { View, TouchableOpacity } from 'react-native';
 import { Text } from '~/components/nativewindui/Text';
 import { LocalizedString } from '~/models/Setting';
@@ -33,6 +34,8 @@ export default function PromotionBanner({
           className="mt-3 self-start rounded-full bg-green-500 px-4 py-2"
           onPress={() => {
             // you can handle navigation here if using React Navigation
+            if (!buttonLink) return;
+            router.push(buttonLink as RelativePathString);
             console.log('Navigate to:', buttonLink);
           }}>
           <Text className="text-white">{buttonName.en}</Text>

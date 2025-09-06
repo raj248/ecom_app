@@ -25,7 +25,7 @@ export default function FeatureCategory() {
   const handleCategoryClick = (id: string, categoryName: string) => {
     const categorySlug = categoryName.toLowerCase().replace(/[^a-z0-9]+/gi, '-');
     const url = `/search?category=${categorySlug}&_id=${id}`;
-    // console.log('Navigate to:', url);
+    console.log('Navigate to:', url);
     router.push(`/search?category=${categorySlug}&_id=${id}`);
 
     // If you’re using React Navigation
