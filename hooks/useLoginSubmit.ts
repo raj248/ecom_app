@@ -4,6 +4,7 @@ import CustomerServices, { LoginCustomerResponse } from '~/services/CustomerServ
 import { Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSession } from '~/contexts/SessionContext';
+import { getFcmToken } from '~/services/FcmServices';
 
 type FormData = {
   email?: string;
@@ -40,9 +41,11 @@ export const useLoginSubmit = (
         Alert.alert('Success', res.message);
       } else {
         // Login mode
+        const fcmToken = await getFcmToken();
         res = (await CustomerServices.loginCustomer({
           email: data.email,
           password: data.password,
+          fcmToken,
         })) as LoginCustomerResponse;
 
         // Save token in AsyncStorage

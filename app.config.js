@@ -1,5 +1,6 @@
 import 'dotenv/config';
 console.log('Base url in app config: ', process.env.EXPO_PUBLIC_API_BASE_URL);
+console.log('process.env.GOOGLE_SERVICES_FILE', process.env.GOOGLE_SERVICES_FILE);
 export default {
   expo: {
     name: 'ecom-app',
@@ -44,6 +45,9 @@ export default {
         backgroundColor: '#ffffff',
       },
       package: 'com.shashankraj007281.ecomapp',
+      googleServicesFile: process.env.GOOGLE_SERVICES_FILE,
+      useNextNotificationsApi: true,
+      versionCode: 1,
     },
     extra: {
       router: {},

@@ -20,6 +20,8 @@ import { NAV_THEME } from '~/theme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SessionProvider } from '~/contexts/SessionContext';
 import Toast from 'react-native-toast-message';
+import { useEffect } from 'react';
+import { listenForFcmMessages } from '~/services/FcmServices';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -30,6 +32,12 @@ export default function RootLayout() {
   useInitialAndroidBarSync();
   const { colorScheme, isDarkColorScheme } = useColorScheme();
   const queryClient = new QueryClient();
+
+  useEffect(() => {
+    const unsubscribe = listenForFcmMessages();
+    return unsubscribe; // cleanup
+  }, []);
+
   return (
     <>
       <StatusBar
