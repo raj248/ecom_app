@@ -1,32 +1,32 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import messaging, {
-  FirebaseMessagingTypes,
-  setBackgroundMessageHandler,
+import {
   getMessaging,
+  onMessage,
+  setBackgroundMessageHandler,
+  getToken,
+  requestPermission,
 } from '@react-native-firebase/messaging';
 import { getApp } from '@react-native-firebase/app';
 
 const FCM_TOKEN_KEY = 'fcmToken';
-const app = getApp();
-
-const msg = getMessaging(app);
+const messaging = getMessaging(getApp());
 
 /**
  * Request notification permission and get FCM token
  */
 export const getFcmToken = async (): Promise<string | null> => {
   try {
-    const authStatus = await messaging().requestPermission();
+    const authStatus = await requestPermission(messaging);
     const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+      authStatus === 1 || // AuthorizationStatus.AUTHORIZED
+      authStatus === 2; // AuthorizationStatus.PROVISIONAL
 
     if (!enabled) {
       console.log('Notification permission not granted');
       return null;
     }
 
-    const token = await messaging().getToken();
+    const token = await getToken(messaging);
     console.log('FCM Token:', token);
 
     if (token) {
@@ -36,7 +36,6 @@ export const getFcmToken = async (): Promise<string | null> => {
   } catch (error) {
     console.error('Error getting FCM token', error);
   }
-
   return null;
 };
 
@@ -53,16 +52,19 @@ export const loadStoredFcmToken = async (): Promise<string | null> => {
 };
 
 /**
- * Listen to incoming FCM messages in foreground
+ * Foreground listener
  */
 export const listenForFcmMessages = () => {
-  return messaging().onMessage(async (remoteMessage) => {
-    console.log('FCM message received:', remoteMessage);
-    // you can show a local notification here
+  console.log('Registering for FCM messages (Foreground)...');
+  return onMessage(messaging, async (remoteMessage) => {
+    console.log('📩 Foreground FCM message:', remoteMessage);
   });
 };
 
-// Background
-setBackgroundMessageHandler(msg, async (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
-  console.log('📩 [Background Handler] Notification:', remoteMessage);
+/**
+ * Background handler
+ * ⚠️ Must be in index.js (entry file), not inside a component!
+ */
+setBackgroundMessageHandler(messaging, async (remoteMessage) => {
+  console.log('📩 Background FCM message:', remoteMessage);
 });

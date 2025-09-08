@@ -35,7 +35,10 @@ export default function RootLayout() {
 
   useEffect(() => {
     const unsubscribe = listenForFcmMessages();
-    return unsubscribe; // cleanup
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   return (
