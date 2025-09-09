@@ -7,14 +7,27 @@ import {
   requestPermission,
 } from '@react-native-firebase/messaging';
 import { getApp } from '@react-native-firebase/app';
+import { PermissionsAndroid } from 'react-native';
 
 const FCM_TOKEN_KEY = 'fcmToken';
 const messaging = getMessaging(getApp());
+
+const requestNotificationPermission = async () => {
+  const granted = await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+  );
+  if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    console.log('Notification permission granted');
+  } else {
+    console.log('Notification permission denied');
+  }
+};
 
 /**
  * Request notification permission and get FCM token
  */
 export const getFcmToken = async (): Promise<string | null> => {
+  await requestNotificationPermission();
   try {
     const authStatus = await requestPermission(messaging);
     const enabled =
