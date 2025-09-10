@@ -1,4 +1,5 @@
 import 'dotenv/config';
+
 console.log('Base url in app config: ', process.env.EXPO_PUBLIC_API_BASE_URL);
 console.log('process.env.GOOGLE_SERVICES_FILE', process.env.GOOGLE_SERVICES_FILE);
 export default {
